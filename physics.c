@@ -31,7 +31,7 @@ double norm(struct vector u){
     return sqrt(u.x*u.x + u.y*u.y);
 }
 
-struct vector add2(struct vector u, struct vector v){
+struct vector add_2_vectors(struct vector u, struct vector v){
     struct vector w;
 
     w.x = u.x + v.x;
@@ -40,13 +40,13 @@ struct vector add2(struct vector u, struct vector v){
     return w;
 }
 
-struct vector addN(struct vector *T, int N){
+struct vector add_N_vectors(struct vector *T, int N){
     struct vector u;
     u.x = 0;
     u.y = 0;
 
     for(int i = 0; i<N; i++){
-        u = add2(u, T[i]);
+        u = add_2_vectors(u, T[i]);
     }
 
     return u;
