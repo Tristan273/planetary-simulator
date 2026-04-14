@@ -89,13 +89,10 @@ struct body merge_bodies(struct body body1, struct body body2){
     sum.position.x = (body1.position.x + body2.position.x)/2;
     sum.position.y = (body1.position.y + body2.position.y)/2;
 
-    if(body1.mass >= body2.mass){
-        sum.velocity.x = body1.velocity.x;
-        sum.velocity.y = body1.velocity.y;
-    } else {
-        sum.velocity.x = body2.velocity.x;
-        sum.velocity.y = body2.velocity.y;
-    }
+       
+    sum.velocity.x = body1.mass/sum.mass * body1.velocity.x + body2.mass/sum.mass * body2.velocity.x ;
+    sum.velocity.y = body1.mass/sum.mass * body1.velocity.y + body2.mass/sum.mass * body2.velocity.y ;
+
 }
 
 void rebound_bodies(struct body *body1, struct body *body2){
