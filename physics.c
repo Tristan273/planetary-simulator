@@ -69,11 +69,10 @@ struct vector simulate_grav_force2(struct body body1, struct body body2){
 }
 
 struct vector simulate_grav_forceN(struct body body1, struct body *T, int N){
-    struct vector grav_force;
     struct vector grav_force = {0.0, 0.0};
     
     for(int i = 0; i<N; i++){
-        grav_force = add2(grav_force, simulate_grav_force2(T[i], body1));
+        grav_force = add_2_vectors(grav_force, simulate_grav_force2(T[i], body1));
     }
 
     return grav_force;
