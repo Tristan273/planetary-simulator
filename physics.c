@@ -3,10 +3,6 @@
 #include <math.h>
 #include "physics.h"
 
-#define G 6.674E-11  // attraction force constant
-
-
-
 /* FUNCTIONS */
 double norm(struct vector u){
     return sqrt(u.x*u.x + u.y*u.y);
@@ -53,7 +49,9 @@ struct vector simulate_grav_forceN(struct body body1, struct body *T, int N){
     struct vector grav_force = {0.0, 0.0};
     
     for(int i = 0; i<N; i++){
-        grav_force = add_2_vectors(grav_force, simulate_grav_force2(T[i], body1));
+        if(T[i].id != body1.id){
+            grav_force = add_2_vectors(grav_force, simulate_grav_force2(T[i], body1));
+        }
     }
 
     return grav_force;
