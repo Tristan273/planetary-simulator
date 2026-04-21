@@ -31,12 +31,27 @@ void render_scene(SDL_Renderer *renderer, struct body *bodies, int N) {
     SDL_RenderPresent(renderer);
 }
 
+
+void update_body(struct body *body, double dt){
+    body->position.x += body->velocity.x * dt;
+    body->position.y += body->velocity.y * dt;
+}
+
+void update_bodies(struct body *bodies, double dt, int N){
+    for(int i=0; i<N; i++){
+        update_body(&bodies[i], dt);
+    }
+}
+
+
 int main() {
-    struct body earth = {1, 10, 10, {200.0, 200.0}, {0.0, 0.0}, 1};
+    struct body earth = {1, 10, 10, {200.0, 200.0}, {10.0, 10.0}, 1};
     struct body sun = {2, 20, 20, {400.0, 200.0}, {0.0, 0.0}, 1};
 
     struct body bodies[] = {earth, sun};
     int N = 2;
+
+    double dt = 0.016;
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -60,7 +75,11 @@ int main() {
                 running = false;
         }
 
+        
+        update_bodies(bodies, dt, N);
         render_scene(renderer, bodies, N);
+
+
         SDL_Delay(16);
     }
 
