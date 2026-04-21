@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 #include "physics.h"
+#include "leapfrog.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
@@ -45,13 +46,13 @@ void update_bodies(struct body *bodies, double dt, int N){
 
 
 int main() {
-    struct body earth = {1, 10, 10, {200.0, 200.0}, {10.0, 10.0}, 1};
-    struct body sun = {2, 20, 20, {400.0, 200.0}, {0.0, 0.0}, 1};
+    struct body earth = {1, 10000, 10, {600, 400}, {0.0, 0.0}, 1};
+    struct body moon = {2, 1, 3, {750.0, 400.0}, {0.0, 40}, 1};
 
-    struct body bodies[] = {earth, sun};
+    struct body bodies[] = {earth, moon};
+
     int N = 2;
-
-    double dt = 0.016;
+    double dt = 0.01;
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -75,8 +76,9 @@ int main() {
                 running = false;
         }
 
-        
-        update_bodies(bodies, dt, N);
+
+        leapfrog_step(bodies, N, dt);
+
         render_scene(renderer, bodies, N);
 
 
