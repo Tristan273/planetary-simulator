@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define G 6.674E-11  // attraction force constant
+#define G 50  // attraction force constant
 
 /* STRUCTURES */
 struct vector{
