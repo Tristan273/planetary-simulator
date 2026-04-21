@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "physics.h"
 
 #define G 6.674E-11  // attraction force constant
 
@@ -92,6 +93,7 @@ struct body merge_bodies(struct body body1, struct body body2){
     sum.velocity.x = body1.mass/sum.mass * body1.velocity.x + body2.mass/sum.mass * body2.velocity.x ;
     sum.velocity.y = body1.mass/sum.mass * body1.velocity.y + body2.mass/sum.mass * body2.velocity.y ;
 
+    return sum;
 }
 
 void rebound_bodies(struct body *body1, struct body *body2){
