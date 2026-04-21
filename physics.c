@@ -6,28 +6,8 @@
 #define G 6.674E-11  // attraction force constant
 
 
-/* STRUCTURES */
-struct vector{
-    double x;
-    double y;
-};
-
-struct body{
-    int id;
-
-    double mass;
-    double radius;
-
-    struct vector position;
-
-    struct vector velocity;
-    
-    int type; // if we wish to differentiate stars (type 0), planets (1), asteroids (2),...
-};
-
 
 /* FUNCTIONS */
-
 double norm(struct vector u){
     return sqrt(u.x*u.x + u.y*u.y);
 }
@@ -114,8 +94,4 @@ void rebound_bodies(struct body *body1, struct body *body2){
 
     body2->velocity.x = x1/norm1 * norm2;
     body2->velocity.y = y1/norm1 * norm2;
-}
-
-int main(){
-    return 0;
 }
