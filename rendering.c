@@ -46,12 +46,27 @@ void update_bodies(struct body *bodies, double dt, int N){
 
 
 int main() {
-    struct body earth = {1, 10000, 10, {600, 400}, {0.0, 0.0}, 1};
-    struct body moon = {2, 1, 3, {750.0, 400.0}, {0.0, 40}, 1};
+    int N;
+    if(fscanf(stdin, "%d", &N)==0){
+        return 1;
+    }
 
-    struct body bodies[] = {earth, moon};
+    struct body* bodies = malloc(N*sizeof(struct body));
 
-    int N = 2;
+    for(int i=0; i<N; i++){
+        if((fscanf(stdin, "%d", &bodies[i].id)==0) || 
+        (fscanf(stdin, "%lf", &bodies[i].mass)==0) || 
+        (fscanf(stdin, "%lf", &bodies[i].radius)==0) || 
+        (fscanf(stdin, "%lf", &bodies[i].position.x)==0) || 
+        (fscanf(stdin, "%lf", &bodies[i].position.y)==0) || 
+        (fscanf(stdin, "%lf", &bodies[i].velocity.x)==0) || 
+        (fscanf(stdin, "%lf", &bodies[i].velocity.y)==0) ||
+        (fscanf(stdin, "%d", &bodies[i].type)==0)){
+            return 1;
+        }
+    }
+
+
     double dt = 0.01;
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -88,5 +103,8 @@ int main() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+
+    free(bodies);
+    
     return 0;
 }
