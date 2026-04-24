@@ -49,7 +49,7 @@ struct vector simulate_grav_forceN(struct body body1, struct body *T, int N){
     struct vector grav_force = {0.0, 0.0};
     
     for(int i = 0; i<N; i++){
-        if(T[i].id != body1.id){
+        if(T[i].id != body1.id && T[i].type != 0){
             grav_force = add_2_vectors(grav_force, simulate_grav_force2(T[i], body1));
         }
     }
