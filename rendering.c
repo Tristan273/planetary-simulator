@@ -85,17 +85,43 @@ int main() {
     bool running = true;
     SDL_Event event;
 
+    int paused = 0;
+    int backwards = 0;
+
     while (running) {
         while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT)
+            if (event.type == SDL_QUIT){
                 running = false;
+            }
+            else if (event.type == SDL_KEYDOWN) {
+
+                if (event.key.keysym.sym == SDLK_p) { // checks if the pressed key is P
+                    paused = 1 - paused; // inverts the value of paused
+                } 
+
+                else if (event.key.keysym.sym == SDLK_LEFT) { // checks if the pressed key is the left arrow
+                    backwards = 1; // the simulation has to run back
+                } else if (event.key.keysym.sym == SDLK_RIGHT) { // checks if the pressed key is the right arrow
+                    backwards = 0; // the simulation will have to run forwards
+                }
+            }
         }
+        
 
+        if(paused == 0 && backwards == 0){ // the simulation is running forwards
 
-        leapfrog_step(bodies, N, dt);
+            leapfrog_step(bodies, N, dt); // modifies the position and velocity of the bodies
+            render_scene(renderer, bodies, N);
 
-        render_scene(renderer, bodies, N);
+        } else if(paused == 0 && backwards == 1){ // the simulation is running backwards
 
+            leapfrog_step(bodies, N, -dt); // modifies the position and velocity of the bodies
+            render_scene(renderer, bodies, N);
+
+        } else if (paused == 1) { // the simulation is paused
+
+            render_scene(renderer, bodies, N);
+        }
 
         SDL_Delay(16);
     }
