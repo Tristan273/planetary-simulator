@@ -67,7 +67,7 @@ int main() {
     }
 
 
-    double dt = 0.01;
+    double dt = 0.001;
 
     SDL_Init(SDL_INIT_VIDEO);
 
