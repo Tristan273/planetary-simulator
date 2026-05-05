@@ -102,7 +102,7 @@ int main() {
         initial_bodies[i].type = bodies[i].color_b;
     }
 
-    double dt = 0.05;
+    double dt = 0.001;
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -218,6 +218,7 @@ int main() {
                 render_scene(renderer, bodies, N, 1);
             }
 
+        SDL_Delay(16);
     }
 
     SDL_DestroyRenderer(renderer);
