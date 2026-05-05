@@ -6,18 +6,28 @@
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
 
-void render_body(SDL_Renderer *renderer, struct body body){
-    if(body.type != 0){
-        SDL_Rect r = {
-            body.position.x - body.radius,
-            body.position.y - body.radius,
-            body.radius * 2,
-            body.radius * 2
-        };
+void draw_filled_circle(SDL_Renderer *renderer, int cx, int cy, int r) {
+    for (int dy = -r; dy <= r; dy++) {
+        int dx = (int)sqrt(r*r - dy*dy);
 
-        SDL_RenderFillRect(renderer, &r);
+
+        SDL_RenderDrawLine(renderer, cx - dx, cy + dy,cx + dx, cy + dy);
     }
 }
+
+
+void render_body(SDL_Renderer *renderer, struct body body){
+    if(body.type != 0){
+
+
+        // choice of color
+        SDL_SetRenderDrawColor(renderer, 180, 180, 255, 255);
+
+
+        draw_filled_circle(renderer, (int)body.position.x, (int)body.position.y, (int)body.radius);
+    }
+}
+
 
 void render_scene(SDL_Renderer *renderer, struct body *bodies, int N) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -110,6 +120,11 @@ int main() {
                 if (event.key.keysym.sym == SDLK_p) { // checks if the pressed key is P
                     paused = 1 - paused; // inverts the value of paused
                 } 
+                else if (event.key.keysym.sym == SDLK_r){ // checks if the pressed key is R
+                    for(int i=0; i<N; i++){
+                        bodies[i] = initial_bodies[i]; // resets each body to its inital value
+                    }
+                }
 
                 else if (event.key.keysym.sym == SDLK_LEFT) { // checks if the pressed key is the left arrow
                     backwards = 1; // the simulation has to run back
@@ -143,6 +158,6 @@ int main() {
     SDL_Quit();
 
     free(bodies);
-    
+    free(initial_bodies);
     return 0;
 }
