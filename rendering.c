@@ -65,9 +65,21 @@ int main() {
             return 1;
         }
     }
+    
+    // In order to be able to reset the simulation : create a copy of the initial value of bodies
+    struct body* initial_bodies = malloc(N*sizeof(struct body));
+    for(int i=0; i<N; i++){
+        initial_bodies[i].id = bodies[i].id;
+        initial_bodies[i].mass = bodies[i].mass;
+        initial_bodies[i].radius = bodies[i].radius;
+        initial_bodies[i].position.x = bodies[i].position.x;
+        initial_bodies[i].position.y = bodies[i].position.y;
+        initial_bodies[i].velocity.x = bodies[i].velocity.x;
+        initial_bodies[i].velocity.y = bodies[i].velocity.y;
+        initial_bodies[i].type = bodies[i].type;
+    }
 
-
-    double dt = 0.001;
+    double dt = 0.05;
 
     SDL_Init(SDL_INIT_VIDEO);
 
