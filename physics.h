@@ -21,8 +21,13 @@ struct body{
 
     struct vector position;
     struct vector velocity;
+
+    int color_r;
+    int color_g;
+    int color_b;
     
     int type;
+
 };
 
 /* FUNCTION PROTOTYPES */

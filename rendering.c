@@ -21,7 +21,7 @@ void render_body(SDL_Renderer *renderer, struct body body){
 
 
         // choice of color
-        SDL_SetRenderDrawColor(renderer, 180, 180, 255, 255);
+        SDL_SetRenderDrawColor(renderer, body.color_r, body.color_g, body.color_b, 255);
 
 
         draw_filled_circle(renderer, (int)body.position.x, (int)body.position.y, (int)body.radius);
@@ -78,7 +78,10 @@ int main() {
         (fscanf(stdin, "%lf", &bodies[i].position.y)==0) || 
         (fscanf(stdin, "%lf", &bodies[i].velocity.x)==0) || 
         (fscanf(stdin, "%lf", &bodies[i].velocity.y)==0) ||
-        (fscanf(stdin, "%d", &bodies[i].type)==0)){
+        (fscanf(stdin, "%d", &bodies[i].type)==0) ||
+        (fscanf(stdin, "%d", &bodies[i].color_r)==0) ||
+        (fscanf(stdin, "%d", &bodies[i].color_g)==0) ||
+        (fscanf(stdin, "%d", &bodies[i].color_b)==0)){
             return 1;
         }
     }
@@ -94,6 +97,9 @@ int main() {
         initial_bodies[i].velocity.x = bodies[i].velocity.x;
         initial_bodies[i].velocity.y = bodies[i].velocity.y;
         initial_bodies[i].type = bodies[i].type;
+        initial_bodies[i].type = bodies[i].color_r;
+        initial_bodies[i].type = bodies[i].color_g;
+        initial_bodies[i].type = bodies[i].color_b;
     }
 
     double dt = 0.05;
