@@ -212,7 +212,7 @@ int main() {
             render_scene(renderer, bodies, N, 1);
         }
 
-        SDL_Delay(16);
+        SDL_Delay(1);
     }
 
     SDL_DestroyRenderer(renderer);
