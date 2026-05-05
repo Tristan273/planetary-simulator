@@ -29,15 +29,22 @@ void render_body(SDL_Renderer *renderer, struct body body){
 }
 
 
-void render_scene(SDL_Renderer *renderer, struct body *bodies, int N) {
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
+void render_scene(SDL_Renderer *renderer, struct body *bodies, int N, int fading) {
+    if(fading == 1){
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 10);
+        SDL_Rect fade = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
+        SDL_RenderFillRect(renderer, &fade);
+    }
+    else {
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+    }
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
     for (int i = 0; i < N; i++) {
         render_body(renderer, bodies[i]);
     }
+
 
     SDL_RenderPresent(renderer);
 }
@@ -103,6 +110,8 @@ int main() {
     );
 
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
 
     bool running = true;
     SDL_Event event;
@@ -138,16 +147,16 @@ int main() {
         if(paused == 0 && backwards == 0){ // the simulation is running forwards
 
             leapfrog_step(bodies, N, dt); // modifies the position and velocity of the bodies
-            render_scene(renderer, bodies, N);
+            render_scene(renderer, bodies, N, 1);
 
         } else if(paused == 0 && backwards == 1){ // the simulation is running backwards
 
             leapfrog_step(bodies, N, -dt); // modifies the position and velocity of the bodies
-            render_scene(renderer, bodies, N);
+            render_scene(renderer, bodies, N, 1);
 
         } else if (paused == 1) { // the simulation is paused
 
-            render_scene(renderer, bodies, N);
+            render_scene(renderer, bodies, N, 1);
         }
 
         SDL_Delay(16);
