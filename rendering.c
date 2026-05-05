@@ -140,6 +140,13 @@ int main() {
                 } else if (event.key.keysym.sym == SDLK_RIGHT) { // checks if the pressed key is the right arrow
                     backwards = 0; // the simulation will have to run forwards
                 }
+                else if (event.key.keysym.sym == SDLK_s) { // checks if the pressed key is S
+                    dt *= 0.5; // slows the simulation down
+                }
+                else if (event.key.keysym.sym == SDLK_f) { // checks if the pressed key is F
+                    dt *= 2; // runs the simulation faster
+                }
+
             }
         }
         // Test the collisions
