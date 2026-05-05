@@ -119,6 +119,8 @@ int main() {
     int paused = 0;
     int backwards = 0;
 
+    int frame = 0; // count the frames in the simulation to make something happen every X frames
+
     while (running) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT){
@@ -149,6 +151,24 @@ int main() {
 
             }
         }
+
+        frame++; 
+
+        // Display the enrgies every X seconds
+        if(frame % 60 == 0){ // the following things happen every 60 frames
+            for(int i = 0; i < N; i++){
+                if(bodies[i].type == 0) continue;
+
+
+                double Ek = calculate_kinetic_energy(bodies[i]);
+                double Ep = calculate_potential_energy(bodies[i], bodies, N);
+
+
+                printf("Body %d: Ek = %f | Ep = %f | E = %f\n", bodies[i].id, Ek, Ep, Ek + Ep);
+            }
+            printf("\n");
+        } 
+
         // Test the collisions
         for(int i = 0; i < N; i++){
             if (bodies[i].type == 0) continue;

@@ -117,3 +117,29 @@ int are_colliding(struct body body1, struct body body2){
         return 0;
     }
 }
+
+
+double calculate_potential_energy(struct body body1, struct body *T, int N){
+    double kinetic_energy = 0;
+    struct vector OM;
+    double d;
+   
+    for(int i = 0; i<N; i++){
+        if(T[i].id != body1.id && T[i].type != 0){
+
+            OM.x = T[i].position.x - body1.position.x;
+            OM.y = T[i].position.y - body1.position.y;
+
+            d = norm(OM);
+            kinetic_energy -= G * body1.mass * T[i].mass / d;
+        }
+    }
+
+
+    return kinetic_energy;
+}
+
+
+double calculate_kinetic_energy(struct body body1){
+    return body1.mass * norm(body1.velocity)* norm(body1.velocity)  / 2;
+}
