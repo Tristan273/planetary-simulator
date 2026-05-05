@@ -29,6 +29,18 @@ struct vector add_N_vectors(struct vector *T, int N){
     return u;
 }
 
+struct vector substract_2_vectors(struct vector u, struct vector v){
+    struct vector w;
+
+
+    w.x = u.x - v.x;
+    w.y = u.y - v.y;
+
+
+    return w;
+}
+
+
 struct vector simulate_grav_force2(struct body body1, struct body body2){
     // The force body1 applies on body2
     struct vector grav_force;
@@ -70,7 +82,7 @@ struct body merge_bodies(struct body body1, struct body body2){
        
     sum.velocity.x = body1.mass/sum.mass * body1.velocity.x + body2.mass/sum.mass * body2.velocity.x ;
     sum.velocity.y = body1.mass/sum.mass * body1.velocity.y + body2.mass/sum.mass * body2.velocity.y ;
-
+    sum.type = body1.type;
     return sum;
 }
 
@@ -92,4 +104,16 @@ void rebound_bodies(struct body *body1, struct body *body2){
 
     body2->velocity.x = x1/norm1 * norm2;
     body2->velocity.y = y1/norm1 * norm2;
+}
+
+int are_colliding(struct body body1, struct body body2){
+    double distance = norm(substract_2_vectors(body1.position, body2.position));
+
+
+    if(distance < body1.radius + body2.radius){
+        return 1;
+    }
+    else{
+        return 0;
+    }
 }

@@ -41,4 +41,8 @@ struct body merge_bodies(struct body body1, struct body body2);
 
 void rebound_bodies(struct body *body1, struct body *body2);
 
+
+int are_colliding(struct body body1, struct body body2);
+
+struct vector substract_2_vectors(struct vector u, struct vector v);
 #endif

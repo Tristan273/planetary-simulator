@@ -142,7 +142,27 @@ int main() {
                 }
             }
         }
-        
+        // Test the collisions
+        for(int i = 0; i < N; i++){
+            if (bodies[i].type == 0) continue;
+
+
+            for(int j = i + 1; j < N; j++){
+                if (bodies[j].type == 0) continue;
+
+
+                if (are_colliding(bodies[i], bodies[j])) {
+
+
+                    bodies[i] = merge_bodies(bodies[i], bodies[j]);
+                    bodies[j].type = 0;
+
+
+                    break;
+                }
+            }
+        }
+
 
         if(paused == 0 && backwards == 0){ // the simulation is running forwards
 
