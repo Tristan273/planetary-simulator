@@ -127,6 +127,8 @@ int main() {
 
     int frame = 0; // count the frames in the simulation to make something happen every X frames
 
+    int speed = 1;
+
     while (running) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT){
@@ -149,12 +151,13 @@ int main() {
                     backwards = 0; // the simulation will have to run forwards
                 }
                 else if (event.key.keysym.sym == SDLK_s) { // checks if the pressed key is S
-                    dt *= 0.5; // slows the simulation down
+                    if(speed > 1){
+                        speed /= 2; // slow the simulation down
+                    }
                 }
                 else if (event.key.keysym.sym == SDLK_f) { // checks if the pressed key is F
-                    dt *= 2; // runs the simulation faster
+                    speed *= 2; // runs the simulation faster
                 }
-
             }
         }
 
@@ -196,23 +199,25 @@ int main() {
             }
         }
 
+        if(paused == 0){
+            for(int k = 0; k < speed; k++){
+                if(backwards == 0){ // the simulation is running forwards
 
-        if(paused == 0 && backwards == 0){ // the simulation is running forwards
+                    leapfrog_step(bodies, N, dt); // modifies the position and velocity of the bodies
 
-            leapfrog_step(bodies, N, dt); // modifies the position and velocity of the bodies
-            render_scene(renderer, bodies, N, 1);
+                } else if(paused == 0 && backwards == 1){ // the simulation is running backwards
 
-        } else if(paused == 0 && backwards == 1){ // the simulation is running backwards
+                    leapfrog_step(bodies, N, -dt); // modifies the position and velocity of the bodies
 
-            leapfrog_step(bodies, N, -dt); // modifies the position and velocity of the bodies
-            render_scene(renderer, bodies, N, 1);
+                } 
+            }
+            render_scene(renderer, bodies, N, 1); // renders only after updating the body 'speed' times 
 
         } else if (paused == 1) { // the simulation is paused
 
-            render_scene(renderer, bodies, N, 1);
-        }
+                render_scene(renderer, bodies, N, 1);
+            }
 
-        SDL_Delay(1);
     }
 
     SDL_DestroyRenderer(renderer);
