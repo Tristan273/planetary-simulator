@@ -39,3 +39,7 @@ Once you are done, you can remove all the .o files by running "*make clean*". To
 ## **Controls for the simulation :**
 - Pressing the 'P' key once will pause the simulation. Pressing 'P' again will resume it
 - Pressing the left arrow key once will make the simulation run backwards in time. Pressing the right arrow key will make it run normally again.
+- Pressing 'esc' will close the simulation
+- Pressing 'F' makes the simulation faster 
+- Pressing 'S' slows it down
+- Pressing 'R' resets the simulation 
