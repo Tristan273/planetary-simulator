@@ -6,6 +6,54 @@
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
 
+/* ── Trails ─────────────────────────────────────────────────────────────── */
+#define TRAIL_LEN  300   /* number of past positions kept per body */
+#define MAX_BODIES 256   /* maximum number of bodies supported */
+/*
+ * Structure representing the trail of a body.
+ * We use a circular buffer: instead of a ever-growing array,
+ * we write in a loop into a fixed-size array of length TRAIL_LEN.
+ * The oldest positions are automatically overwritten by new ones.
+ */
+typedef struct {
+    double x[TRAIL_LEN];  /* X coordinates of the last TRAIL_LEN positions */
+    double y[TRAIL_LEN];  /* Y coordinates of the last TRAIL_LEN positions */
+    int    head;          /* index of the next slot to write (0 to TRAIL_LEN-1) */
+    int    count;         /* number of currently stored positions               */
+                          /* equals TRAIL_LEN once the buffer is full           */
+} Trail;
+
+
+/* One trail per body, indexed the same way as the bodies[] array */
+static Trail trails[MAX_BODIES];
+
+//Appends position (x, y) to trail t
+static void trail_push(Trail *t, double x, double y) {
+    t->x[t->head] = x;
+    t->y[t->head] = y;
+    t->head = (t->head + 1) % TRAIL_LEN;
+    if (t->count < TRAIL_LEN) t->count++;
+}
+
+//Clears the current trail t
+static void trail_clear(Trail *t) {
+    t->head  = 0;
+    t->count = 0;
+}
+
+static void render_trail(SDL_Renderer *renderer, struct body *body, Trail *t) {
+    if (body->type == 0 || t->count < 2) return;
+    SDL_SetRenderDrawColor(renderer, body->color_r, body->color_g, body->color_b, 160);
+    int prev = (t->head - t->count + TRAIL_LEN) % TRAIL_LEN;
+    for (int k = 1; k < t->count; k++) {
+        int cur = (prev + 1) % TRAIL_LEN;
+        SDL_RenderDrawLine(renderer,
+                           (int)t->x[prev], (int)t->y[prev],
+                           (int)t->x[cur],  (int)t->y[cur]);
+        prev = cur;
+    }
+}
+
 void draw_filled_circle(SDL_Renderer *renderer, int cx, int cy, int r) {
     for (int dy = -r; dy <= r; dy++) {
         int dx = (int)sqrt(r*r - dy*dy);
@@ -29,25 +77,23 @@ void render_body(SDL_Renderer *renderer, struct body body){
 }
 
 
-void render_scene(SDL_Renderer *renderer, struct body *bodies, int N, int fading) {
-    if(fading == 1){
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 10);
-        SDL_Rect fade = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-        SDL_RenderFillRect(renderer, &fade);
-    }
-    else {
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
-    }
+void render_scene(SDL_Renderer *renderer, struct body *bodies, int N) {
 
+    /* Clear the screen with solid black each frame. */
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
 
-    for (int i = 0; i < N; i++) {
+    /* Draw trails behind the bodies. */
+    for (int i = 0; i < N; i++)
+        render_trail(renderer, &bodies[i], &trails[i]);
+
+    /* Draw the bodies on top. */
+    for (int i = 0; i < N; i++)
         render_body(renderer, bodies[i]);
-    }
-
 
     SDL_RenderPresent(renderer);
 }
+
 
 
 void update_body(struct body *body, double dt){
@@ -84,6 +130,7 @@ int main() {
         (fscanf(stdin, "%d", &bodies[i].color_b)==0)){
             return 1;
         }
+        trail_clear(&trails[i]);
     }
     
     // In order to be able to reset the simulation : create a copy of the initial value of bodies
@@ -198,7 +245,10 @@ int main() {
                 }
             }
         }
-
+        for(int i = 0; i < N; i++){                                              /* <- ajouter */
+            if(bodies[i].type != 0)                                              /* <- ajouter */
+                trail_push(&trails[i], bodies[i].position.x, bodies[i].position.y); /* <- ajouter */
+        }   
         if(paused == 0){
             for(int k = 0; k < speed; k++){
                 if(backwards == 0){ // the simulation is running forwards
@@ -211,11 +261,11 @@ int main() {
 
                 } 
             }
-            render_scene(renderer, bodies, N, 1); // renders only after updating the body 'speed' times 
+            render_scene(renderer, bodies, N); 
 
         } else if (paused == 1) { // the simulation is paused
 
-                render_scene(renderer, bodies, N, 1);
+                render_scene(renderer, bodies, N);
             }
 
         SDL_Delay(16);
