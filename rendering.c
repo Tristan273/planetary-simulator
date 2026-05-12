@@ -97,9 +97,9 @@ int main() {
         initial_bodies[i].velocity.x = bodies[i].velocity.x;
         initial_bodies[i].velocity.y = bodies[i].velocity.y;
         initial_bodies[i].type = bodies[i].type;
-        initial_bodies[i].type = bodies[i].color_r;
-        initial_bodies[i].type = bodies[i].color_g;
-        initial_bodies[i].type = bodies[i].color_b;
+        initial_bodies[i].color_r = bodies[i].color_r;
+        initial_bodies[i].color_g = bodies[i].color_g;
+        initial_bodies[i].color_b = bodies[i].color_b;
     }
 
     double dt = 0.001;
