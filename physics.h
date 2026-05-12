@@ -27,7 +27,8 @@ struct body{
     int color_b;
     
     int type;
-
+    
+    char* name;
 };
 
 /* FUNCTION PROTOTYPES */

@@ -86,6 +86,12 @@ struct body merge_bodies(struct body body1, struct body body2){
     sum.color_r = (body1.color_r + body2.color_r)/2;
     sum.color_g = (body1.color_g + body2.color_g)/2;
     sum.color_b = (body1.color_b + body2.color_b)/2;
+    if (body1.mass > body2.mass){
+        sum.name = body1.name;
+    }
+    else{
+        sum.name = body2.name;
+    }
     return sum;
 }
 
