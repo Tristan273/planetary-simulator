@@ -72,6 +72,8 @@ int main() {
 
     int speed = 1;
 
+    double zoom = 1.0;
+
     while (running) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT){
@@ -104,6 +106,12 @@ int main() {
                 }
                 else if (event.key.keysym.sym == SDLK_ESCAPE) {
                     running = false;
+                }
+                else if (event.key.keysym.sym == SDLK_UP) {
+                    zoom *= 1.1;   // zoom in
+                }
+                else if (event.key.keysym.sym == SDLK_DOWN) {
+                    zoom /= 1.1;   // zoom out
                 }
             }
         }
@@ -163,11 +171,11 @@ int main() {
                 trail_push(&trails[i], bodies[i].position.x, bodies[i].position.y);
                 }
             }
-            render_scene(renderer, bodies, N); // renders only after updating the body 'speed' times 
+            render_scene(renderer, window, bodies, N, zoom); // renders only after updating the body 'speed' times 
 
         } else if (paused == 1) { // the simulation is paused
 
-                render_scene(renderer, bodies, N);
+                render_scene(renderer, window, bodies, N, zoom);
             }
 
         SDL_Delay(1);
