@@ -85,6 +85,7 @@ int main() {
                 else if (event.key.keysym.sym == SDLK_r){ // checks if the pressed key is R
                     for(int i=0; i<N; i++){
                         bodies[i] = initial_bodies[i]; // resets each body to its inital value
+                        trail_clear(&trails[i]);
                     }
                 }
 
