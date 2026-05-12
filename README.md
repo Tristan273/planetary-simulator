@@ -9,11 +9,15 @@ In order to numerically solve the equations we're given, we will use the leap-fr
 Finally, we're using the SLD2 library for the graphics
 
 ## **How to run the simulation :**
-1) Install the SDL2 library
+1) Install the SDL2 library:
+    i) open WSL
+    ii) update the package: write "sudo apt update" in the terminal
+    iii) install SDL2: write "sudo apt install libsdl2-dev" in the terminal
+    iv) check if it went well : write "sdl2-config --version" in the terminal, if you get a version, then it's been installed!
 2) Run "*make*" 
 3) Run "*./program < bodies.in*" with the bodies.in file being as follows :
     - The first line of the file should contain an integer : the number of bodies in the simulation
-    - Each following line will be the information for the different bodies separated by a blank space in the following order : id mass radius position.x position.y velocity.x velocity.y type
+    - Each following line will be the information for the different bodies separated by a blank space in the following order : id mass radius position.x position.y velocity.x velocity.y color_r color_g color_b type
     The specifications for these values can be found below
 
 *int id* : identification number of each body, has to be different for each body  
@@ -22,8 +26,12 @@ Finally, we're using the SLD2 library for the graphics
 *double position.x* : position of the center of the body on the x axis  
 *double position.y* : position of the center of the body on the y axis  
 *double velocity.x* : x coordinate of the velocity of the center of the body  
-*double velocity.y* : y coordinate of the velocity of the center of the body  
+*double velocity.y* : y coordinate of the velocity of the center of the body 
+*int color_r* : red component
+*int color_g* : green component
+*int color_r* : blue component 
 *int type* : type of the body. type = 0 is not to be put as value initially, as bodies with a type of 0 are neither rendered nor taken into account for the calculation of the gravitationnal forces  
+*char* name* : name of the body 
 
 Once you are done, you can remove all the .o files by running "*make clean*". To remove the .o files and the program, run "*make fclean*".
 
