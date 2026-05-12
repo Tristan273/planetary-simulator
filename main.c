@@ -55,7 +55,7 @@ int main() {
         SDL_WINDOWPOS_CENTERED,
         WINDOW_WIDTH,
         WINDOW_HEIGHT,
-        0
+        SDL_WINDOW_FULLSCREEN_DESKTOP
     );
 
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
@@ -101,6 +101,9 @@ int main() {
                 }
                 else if (event.key.keysym.sym == SDLK_f) { // checks if the pressed key is F
                     speed *= 2; // runs the simulation faster
+                }
+                else if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    running = false;
                 }
             }
         }
