@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -O2 $(shell sdl2-config --cflags)
 LDFLAGS = $(shell sdl2-config --libs) -lm
 
-SRC = rendering.c physics.c leapfrog.c
+SRC = main.c rendering.c physics.c leapfrog.c
 OBJ = $(SRC:.c=.o)
 
 TARGET = program
@@ -15,7 +15,7 @@ $(TARGET): $(OBJ)
 	$(CC) $(OBJ) -o $(TARGET) $(LDFLAGS)
 
 # Creating the .o
-%.o: %.c physics.h leapfrog.h
+%.o: %.c rendering.h physics.h leapfrog.h
 	$(CC) -c $< -o $@ $(CFLAGS)
 
 # Remove the .o
