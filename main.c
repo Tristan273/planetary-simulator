@@ -133,6 +133,13 @@ int main() {
             printf("\n");
         } 
 
+        // Removing the objects that are too far from the simulation
+        for(int i=0; i < N; i++){
+            if(bodies[i].position.x > 10000000 || bodies[i].position.y > 10000000 || bodies[i].position.x < -10000000 || bodies[i].position.y < -10000000){
+                bodies[i].type = 0;
+            }
+        }
+
         // Test the collisions
         for(int i = 0; i < N; i++){
             if (bodies[i].type == 0) continue;
