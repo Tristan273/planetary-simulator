@@ -93,33 +93,42 @@ void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodie
         render_body(renderer, window, bodies[i], zoom, cam_x, cam_y);
 
 
-    // Render the text on the screen if a body is followed
-    if(selected_body != -1 &&
-   bodies[selected_body].type != 0)
-{
     char buffer[256];
 
-    int w, h;
-    SDL_GetWindowSize(window, &w, &h);
+    // Render the text on the screen if a body is followed
+    if(selected_body != -1 && bodies[selected_body].type != 0){
+        int w, h;
+        SDL_GetWindowSize(window, &w, &h);
 
-    struct body b = bodies[selected_body];
+        struct body b = bodies[selected_body];
 
-    sprintf(buffer, "Body %d", b.id);
+        sprintf(buffer, "Name %s", b.name);
+        draw_text(renderer, font, buffer, w - 250, 20);
 
-    draw_text(renderer, font, buffer, w - 220, 20);
+        sprintf(buffer, "Mass: %.2f", b.mass);
+        draw_text(renderer, font, buffer, w - 250, 40);
 
-    sprintf(buffer, "Mass: %.2f", b.mass);
+        sprintf(buffer, "Radius: %.2f", b.radius);
+        draw_text(renderer, font, buffer, w - 250, 60);
 
-    draw_text(renderer, font, buffer, w - 220, 50);
+        sprintf(buffer, "Position: (%.2f, %.2f)", b.position.x, b.position.y);
+        draw_text(renderer, font, buffer, w - 250, 80);
 
-    sprintf(buffer, "Radius: %.2f", b.radius);
+        sprintf(buffer, "Velocity: (%.2f, %.2f)", b.velocity.x, b.velocity.y);
+        draw_text(renderer, font, buffer, w - 250, 100);
 
-    draw_text(renderer, font, buffer, w - 220, 80);
+        sprintf(buffer, "Kinetic energy : %.2f", calculate_kinetic_energy(b));
+        draw_text(renderer, font, buffer, w - 250, 120);
 
-    sprintf(buffer, "Velocity: (%.2f, %.2f)", b.velocity.x, b.velocity.y);
+        sprintf(buffer, "Potential energy : %.2f", calculate_potential_energy(b, bodies, N));
+        draw_text(renderer, font, buffer, w - 250, 140);
 
-    draw_text(renderer, font, buffer, w - 220, 110);
-}
+        sprintf(buffer, "Body Energy : %.2f", calculate_kinetic_energy(b) + calculate_potential_energy(b, bodies, N));
+        draw_text(renderer, font, buffer, w - 250, 160);
+    }
+
+    sprintf(buffer, "Total system energy %.2f", calculate_total_energy(bodies, N));
+    draw_text(renderer, font, buffer, 0, 20);
 
     SDL_RenderPresent(renderer);
 }
