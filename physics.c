@@ -152,3 +152,35 @@ double calculate_potential_energy(struct body body1, struct body *T, int N){
 double calculate_kinetic_energy(struct body body1){
     return body1.mass * norm(body1.velocity)* norm(body1.velocity)  / 2;
 }
+
+double calculate_total_energy(struct body* bodies, int N){
+    double E = 0;
+
+
+    struct vector OM;
+    double d;
+
+
+    for(int i = 0; i < N; i++){
+        if(bodies[i].type == 0) continue;
+
+
+        E += calculate_kinetic_energy(bodies[i]);
+
+
+        for(int j = i+1; j < N; j++){
+            if(bodies[j].type == 0) continue;
+
+
+            OM.x = bodies[i].position.x - bodies[j].position.x;
+            OM.y = bodies[i].position.y - bodies[j].position.y;
+
+
+            d = norm(OM);
+
+
+            E -= G * bodies[i].mass * bodies[j].mass / d;
+        }
+    }
+    return E;
+}

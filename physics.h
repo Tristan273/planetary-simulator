@@ -55,4 +55,7 @@ double calculate_potential_energy(struct body body1, struct body *T, int N);
 
 double calculate_kinetic_energy(struct body body1);
 
+double calculate_total_energy(struct body* bodies, int N);
+
+
 #endif
