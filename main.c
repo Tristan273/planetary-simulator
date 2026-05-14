@@ -81,6 +81,9 @@ int main() {
     int last_mouse_x = 0;   
     int last_mouse_y = 0;
 
+    int followed_body = -1; // -1 when no body is followed, 0,...,N-1 being the id of the eventually followed body
+
+
     while (running) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT){
@@ -128,6 +131,31 @@ int main() {
 
                     last_mouse_x = event.button.x;
                     last_mouse_y = event.button.y;
+
+                    int mx = event.button.x;
+                    int my = event.button.y;
+
+                    int w, h;
+                    SDL_GetWindowSize(window, &w, &h);
+
+                    double world_x = (mx - w / 2) / zoom + cam_x;
+                    double world_y = (my - h / 2) / zoom + cam_y;
+
+                    followed_body = -1; // resets the followed body every time there is a left click
+
+                    // Test if bodies are getting clicked on 
+                    for(int i = 0; i < N; i++) {
+                        if(bodies[i].type == 0) continue;
+
+                        double dx = world_x - bodies[i].position.x;
+                        double dy = world_y - bodies[i].position.y;
+                        double dist2 = dx*dx + dy*dy;
+
+                        if(dist2 <= bodies[i].radius * bodies[i].radius) {
+                            followed_body = i;
+                            break;
+                        }
+                    }
                 }
             }
             else if (event.type == SDL_MOUSEBUTTONUP) {
@@ -213,10 +241,20 @@ int main() {
                 trail_push(&trails[i], bodies[i].position.x, bodies[i].position.y);
                 }
             }
+
+            // set the camera to the followed body
+            if(followed_body != -1 && bodies[followed_body].type != 0) {
+                    cam_x = bodies[followed_body].position.x;
+                    cam_y = bodies[followed_body].position.y;
+            }
             render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y); // renders only after updating the body 'speed' times 
 
         } else if (paused == 1) { // the simulation is paused
-
+                // set the camera to the followed body
+                if(followed_body != -1 && bodies[followed_body].type != 0) {
+                        cam_x = bodies[followed_body].position.x;
+                        cam_y = bodies[followed_body].position.y;
+                }
                 render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y);
             }
 
