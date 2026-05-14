@@ -25,13 +25,13 @@ void trail_push(Trail *t, double x, double y);
 
 void trail_clear(Trail *t);
 
-void render_trail(SDL_Renderer *renderer, SDL_Window *window, struct body *body, Trail *t, double zoom);
+void render_trail(SDL_Renderer *renderer, SDL_Window *window, struct body *body, Trail *t, double zoom, double cam_x, double cam_y);
 
 void draw_filled_circle(SDL_Renderer *renderer, int cx, int cy, int r);
 
-void render_body(SDL_Renderer *renderer, SDL_Window *window, struct body body, double zoom);
+void render_body(SDL_Renderer *renderer, SDL_Window *window, struct body body, double zoom, double cam_x, double cam_y);
 
-void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodies, int N, double zoom);
+void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodies, int N, double zoom, double cam_x, double cam_y);
 
 void update_body(struct body *body, double dt);
 

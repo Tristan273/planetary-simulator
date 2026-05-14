@@ -73,6 +73,13 @@ int main() {
     int speed = 1;
 
     double zoom = 1.0;
+    double cam_x = WINDOW_WIDTH/2;
+    double cam_y = WINDOW_HEIGHT/2;
+
+    // To drag the mouse
+    int dragging = 0;
+    int last_mouse_x = 0;   
+    int last_mouse_y = 0;
 
     while (running) {
         while (SDL_PollEvent(&event)) {
@@ -112,6 +119,34 @@ int main() {
                 }
                 else if (event.key.keysym.sym == SDLK_DOWN) {
                     zoom /= 1.1;   // zoom out
+                }
+            }
+            else if (event.type == SDL_MOUSEBUTTONDOWN) {
+
+                if(event.button.button == SDL_BUTTON_LEFT) {
+                    dragging = 1;
+
+                    last_mouse_x = event.button.x;
+                    last_mouse_y = event.button.y;
+                }
+            }
+            else if (event.type == SDL_MOUSEBUTTONUP) {
+
+                if(event.button.button == SDL_BUTTON_LEFT) {
+                    dragging = 0;
+                }
+            }
+            else if (event.type == SDL_MOUSEMOTION) {
+
+                if(dragging) {
+                    int dx = event.motion.x - last_mouse_x;
+                    int dy = event.motion.y - last_mouse_y;
+
+                    cam_x -= dx / zoom;
+                    cam_y -= dy / zoom;
+
+                    last_mouse_x = event.motion.x;
+                    last_mouse_y = event.motion.y;
                 }
             }
         }
@@ -178,11 +213,11 @@ int main() {
                 trail_push(&trails[i], bodies[i].position.x, bodies[i].position.y);
                 }
             }
-            render_scene(renderer, window, bodies, N, zoom); // renders only after updating the body 'speed' times 
+            render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y); // renders only after updating the body 'speed' times 
 
         } else if (paused == 1) { // the simulation is paused
 
-                render_scene(renderer, window, bodies, N, zoom);
+                render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y);
             }
 
         SDL_Delay(1);

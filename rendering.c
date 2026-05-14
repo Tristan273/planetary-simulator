@@ -22,7 +22,7 @@ void trail_clear(Trail *t) {
     t->count = 0;
 }
 
-void render_trail(SDL_Renderer *renderer, SDL_Window *window, struct body *body, Trail *t, double zoom) {
+void render_trail(SDL_Renderer *renderer, SDL_Window *window, struct body *body, Trail *t, double zoom, double cam_x, double cam_y) {
     int w, h;
     SDL_GetWindowSize(window, &w, &h);
 
@@ -31,7 +31,7 @@ void render_trail(SDL_Renderer *renderer, SDL_Window *window, struct body *body,
     int prev = (t->head - t->count + TRAIL_LEN) % TRAIL_LEN;
     for (int k = 1; k < t->count; k++) {
         int cur = (prev + 1) % TRAIL_LEN;
-        SDL_RenderDrawLine(renderer, (int)(t->x[prev] * zoom + w/2 * (1 - zoom)), (int)(t->y[prev] * zoom + h/2 * (1 - zoom)), (int)(t->x[cur] * zoom + w/2 * (1 - zoom)), (int)(t->y[cur] * zoom + h/2 * (1 - zoom)));
+        SDL_RenderDrawLine(renderer, (int)((t->x[prev] - cam_x) * zoom + w/2), (int)((t->y[prev] - cam_y) * zoom + h/2), (int)((t->x[cur] - cam_x) * zoom + w/2), (int)((t->y[cur] - cam_y) * zoom + h/2));
         prev = cur;
     }
 }
@@ -46,7 +46,7 @@ void draw_filled_circle(SDL_Renderer *renderer, int cx, int cy, int r) {
 }
 
 
-void render_body(SDL_Renderer *renderer, SDL_Window *window, struct body body, double zoom){
+void render_body(SDL_Renderer *renderer, SDL_Window *window, struct body body, double zoom, double cam_x, double cam_y){
     if(body.type != 0){
         int w, h;
         SDL_GetWindowSize(window, &w, &h);
@@ -54,23 +54,23 @@ void render_body(SDL_Renderer *renderer, SDL_Window *window, struct body body, d
         // choice of color
         SDL_SetRenderDrawColor(renderer, body.color_r, body.color_g, body.color_b, 255);
 
-        draw_filled_circle(renderer, (int)(body.position.x * zoom + w/2 * (1 - zoom)), (int)(body.position.y * zoom + h/2 * (1 - zoom)), (int)(body.radius * zoom));
+        draw_filled_circle(renderer, (int)((body.position.x - cam_x) * zoom + w/2), (int)((body.position.y - cam_y) * zoom + h/2), (int)(body.radius * zoom));
     }
 }
 
 
-void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodies, int N, double zoom) {
+void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodies, int N, double zoom, double cam_x, double cam_y) {
     /* Clear the screen with solid black each frame. */
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
     /* Draw trails behind the bodies. */
     for (int i = 0; i < N; i++)
-        render_trail(renderer, window, &bodies[i], &trails[i], zoom);
+        render_trail(renderer, window, &bodies[i], &trails[i], zoom, cam_x, cam_y);
 
     /* Draw the bodies on top. */
     for (int i = 0; i < N; i++)
-        render_body(renderer, window, bodies[i], zoom);
+        render_body(renderer, window, bodies[i], zoom, cam_x, cam_y);
 
     SDL_RenderPresent(renderer);
 }
