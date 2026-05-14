@@ -1,7 +1,7 @@
 CC = gcc
 
 CFLAGS = -Wall -Wextra -O2 $(shell sdl2-config --cflags)
-LDFLAGS = $(shell sdl2-config --libs) -lm
+LDFLAGS = $(shell sdl2-config --libs) -lSDL2_ttf -lm
 
 SRC = main.c rendering.c physics.c leapfrog.c
 OBJ = $(SRC:.c=.o)

@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <stdbool.h>
 #include "physics.h"
 #include "leapfrog.h"
@@ -48,6 +49,7 @@ int main() {
     double dt = 0.001;
 
     SDL_Init(SDL_INIT_VIDEO);
+    TTF_Init();
 
     SDL_Window *window = SDL_CreateWindow(
         "N-body simulation",
@@ -60,6 +62,9 @@ int main() {
 
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
+    // To write something inside of the window
+    TTF_Font *font = TTF_OpenFont("arial.ttf", 18);
 
 
     bool running = true;
@@ -247,7 +252,7 @@ int main() {
                     cam_x = bodies[followed_body].position.x;
                     cam_y = bodies[followed_body].position.y;
             }
-            render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y); // renders only after updating the body 'speed' times 
+            render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, font); // renders only after updating the body 'speed' times 
 
         } else if (paused == 1) { // the simulation is paused
                 // set the camera to the followed body
@@ -255,7 +260,7 @@ int main() {
                         cam_x = bodies[followed_body].position.x;
                         cam_y = bodies[followed_body].position.y;
                 }
-                render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y);
+                render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, font);
             }
 
         SDL_Delay(1);
@@ -263,6 +268,10 @@ int main() {
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+
+    TTF_CloseFont(font);
+    TTF_Quit();
+
     SDL_Quit();
 
     free(bodies);

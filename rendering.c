@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <stdbool.h>
 #include <math.h>
 #include "physics.h"
@@ -59,7 +60,26 @@ void render_body(SDL_Renderer *renderer, SDL_Window *window, struct body body, d
 }
 
 
-void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodies, int N, double zoom, double cam_x, double cam_y) {
+void draw_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, int x, int y){
+    SDL_Color color = {255,255,255,255};
+
+    SDL_Surface *surface = TTF_RenderText_Blended(font, text, color);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_Rect rect;
+
+    rect.x = x;
+    rect.y = y;
+    rect.w = surface->w;
+    rect.h = surface->h;
+
+    SDL_RenderCopy(renderer, texture, NULL, &rect);
+
+    SDL_FreeSurface(surface);
+    SDL_DestroyTexture(texture);
+}
+
+
+void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodies, int N, double zoom, double cam_x, double cam_y, int selected_body, TTF_Font *font) {
     /* Clear the screen with solid black each frame. */
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -71,6 +91,35 @@ void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodie
     /* Draw the bodies on top. */
     for (int i = 0; i < N; i++)
         render_body(renderer, window, bodies[i], zoom, cam_x, cam_y);
+
+
+    // Render the text on the screen if a body is followed
+    if(selected_body != -1 &&
+   bodies[selected_body].type != 0)
+{
+    char buffer[256];
+
+    int w, h;
+    SDL_GetWindowSize(window, &w, &h);
+
+    struct body b = bodies[selected_body];
+
+    sprintf(buffer, "Body %d", b.id);
+
+    draw_text(renderer, font, buffer, w - 220, 20);
+
+    sprintf(buffer, "Mass: %.2f", b.mass);
+
+    draw_text(renderer, font, buffer, w - 220, 50);
+
+    sprintf(buffer, "Radius: %.2f", b.radius);
+
+    draw_text(renderer, font, buffer, w - 220, 80);
+
+    sprintf(buffer, "Velocity: (%.2f, %.2f)", b.velocity.x, b.velocity.y);
+
+    draw_text(renderer, font, buffer, w - 220, 110);
+}
 
     SDL_RenderPresent(renderer);
 }
