@@ -4,10 +4,12 @@
 #include "physics.h"
 
 /* FUNCTIONS */
+
+//returns the norm of a vector u
 double norm(struct vector u){
     return sqrt(u.x*u.x + u.y*u.y);
 }
-
+//returns w the sum of two vectors u and v
 struct vector add_2_vectors(struct vector u, struct vector v){
     struct vector w;
 
@@ -16,7 +18,7 @@ struct vector add_2_vectors(struct vector u, struct vector v){
 
     return w;
 }
-
+//returns u, the sum of an array of vectors
 struct vector add_N_vectors(struct vector *T, int N){
     struct vector u;
     u.x = 0;
@@ -29,6 +31,7 @@ struct vector add_N_vectors(struct vector *T, int N){
     return u;
 }
 
+//returns w: the vector u-v
 struct vector substract_2_vectors(struct vector u, struct vector v){
     struct vector w;
 
@@ -40,7 +43,8 @@ struct vector substract_2_vectors(struct vector u, struct vector v){
     return w;
 }
 
-
+/*returns the vector grav_force which is the gravitationnal force that
+the first body applies on the second*/
 struct vector simulate_grav_force2(struct body body1, struct body body2){
     // The force body1 applies on body2
     struct vector grav_force;
@@ -57,6 +61,8 @@ struct vector simulate_grav_force2(struct body body1, struct body body2){
     return grav_force;
 }
 
+/*returns the vector grav_force which is the gravitationnal force that
+N bodies applie on the first one*/
 struct vector simulate_grav_forceN(struct body body1, struct body *T, int N){
     struct vector grav_force = {0.0, 0.0};
     
@@ -69,6 +75,7 @@ struct vector simulate_grav_forceN(struct body body1, struct body *T, int N){
     return grav_force;
 }
 
+/*Returns a body formed by merging two colliding bodies */
 struct body merge_bodies(struct body body1, struct body body2){
     struct body sum;
 
