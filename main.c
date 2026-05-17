@@ -183,23 +183,8 @@ int main() {
                 }
             }
         }
-
+        
         frame++; 
-
-        // Display the enrgies every X seconds
-        if(frame % 60 == 0){ // the following things happen every 60 frames
-            for(int i = 0; i < N; i++){
-                if(bodies[i].type == 0) continue;
-
-
-                double Ek = calculate_kinetic_energy(bodies[i]);
-                double Ep = calculate_potential_energy(bodies[i], bodies, N);
-
-
-                printf("Body %d: Ek = %f | Ep = %f | E = %f\n", bodies[i].id, Ek, Ep, Ek + Ep);
-            }
-            printf("\n");
-        } 
 
         // Removing the objects that are too far from the simulation
         for(int i=0; i < N; i++){
