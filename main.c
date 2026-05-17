@@ -57,7 +57,7 @@ int main() {
         SDL_WINDOWPOS_CENTERED,
         WINDOW_WIDTH,
         WINDOW_HEIGHT,
-        SDL_WINDOW_FULLSCREEN_DESKTOP
+        SDL_WINDOW_RESIZABLE
     );
 
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
@@ -183,7 +183,7 @@ int main() {
                 }
             }
         }
-        
+
         frame++; 
 
         // Removing the objects that are too far from the simulation
