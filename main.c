@@ -90,6 +90,30 @@ int main() {
 
 
     while (running) {
+
+        // ADDING BUTTONS
+        int w, h;
+        SDL_GetWindowSize(window, &w, &h);
+
+        // Button size
+        int btn_w = w * 0.08;
+        int btn_h = h * 0.05;
+        int y = h - btn_h - 10; // for the buttons to be at the bottom of the window even when resizing the window
+
+        // Pause button
+        SDL_Rect btn_pause = {w * 0.05, y, btn_w, btn_h};
+
+        // Slow button
+        SDL_Rect btn_slow = {w * 0.05 + btn_w + 10, y, btn_w, btn_h};
+
+        // Fast button
+        SDL_Rect btn_fast = {w * 0.05 + 2*(btn_w + 10), y, btn_w, btn_h};
+
+        // Reset button
+        SDL_Rect btn_reset = {w * 0.05 + 3*(btn_w + 10), y, btn_w, btn_h};
+
+
+
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT){
                 running = false;
@@ -159,6 +183,26 @@ int main() {
                         if(dist2 <= bodies[i].radius * bodies[i].radius) {
                             followed_body = i;
                             break;
+                        }
+                    }
+
+                    // Test if buttons are getting cliked on
+
+                    if (mx >= btn_pause.x && mx <= btn_pause.x + btn_pause.w && my >= btn_pause.y && my <= btn_pause.y + btn_pause.h){
+                    paused = 1 - paused;
+                    }
+                    else if (mx >= btn_slow.x && mx <= btn_slow.x + btn_slow.w && my >= btn_slow.y && my <= btn_slow.y + btn_slow.h){
+                        if(speed > 1){
+                            speed /= 2; // slow the simulation down
+                        }
+                    }
+                    else if (mx >= btn_fast.x && mx <= btn_fast.x + btn_fast.w && my >= btn_fast.y && my <= btn_fast.y + btn_fast.h){
+                        speed *= 2; // runs the simulation faster
+                    }
+                    else if (mx >= btn_reset.x && mx <= btn_reset.x + btn_reset.w && my >= btn_reset.y && my <= btn_reset.y + btn_reset.h){
+                        for(int i=0; i<N; i++){
+                            bodies[i] = initial_bodies[i]; // resets each body to its inital value
+                            trail_clear(&trails[i]);
                         }
                     }
                 }
@@ -237,7 +281,7 @@ int main() {
                     cam_x = bodies[followed_body].position.x;
                     cam_y = bodies[followed_body].position.y;
             }
-            render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, font); // renders only after updating the body 'speed' times 
+            render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, font, btn_pause, btn_slow, btn_fast, btn_reset); // renders only after updating the body 'speed' times 
 
         } else if (paused == 1) { // the simulation is paused
                 // set the camera to the followed body
@@ -245,7 +289,7 @@ int main() {
                         cam_x = bodies[followed_body].position.x;
                         cam_y = bodies[followed_body].position.y;
                 }
-                render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, font);
+                render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, font, btn_pause, btn_slow, btn_fast, btn_reset);
             }
 
         SDL_Delay(1);

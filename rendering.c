@@ -79,7 +79,7 @@ void draw_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, int x, 
 }
 
 
-void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodies, int N, double zoom, double cam_x, double cam_y, int selected_body, TTF_Font *font) {
+void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodies, int N, double zoom, double cam_x, double cam_y, int selected_body, TTF_Font *font, SDL_Rect btn_pause, SDL_Rect btn_slow, SDL_Rect btn_fast, SDL_Rect btn_reset) {
     /* Clear the screen with solid black each frame. */
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -129,6 +129,21 @@ void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodie
 
     sprintf(buffer, "Total system energy %.2f", calculate_total_energy(bodies, N));
     draw_text(renderer, font, buffer, 0, 20);
+
+
+    // Render all the buttons
+    SDL_SetRenderDrawColor(renderer, 60, 60, 60, 255);
+    SDL_RenderFillRect(renderer, &btn_pause);
+    SDL_RenderFillRect(renderer, &btn_slow);
+    SDL_RenderFillRect(renderer, &btn_fast);
+    SDL_RenderFillRect(renderer, &btn_reset);
+
+    // Render the button text
+    draw_text(renderer, font, "Pause", btn_pause.x + 25, btn_pause.y + 10);
+    draw_text(renderer, font, "Slow",  btn_slow.x + 25,  btn_slow.y + 10);
+    draw_text(renderer, font, "Fast",  btn_fast.x + 25,  btn_fast.y + 10);
+    draw_text(renderer, font, "Reset",  btn_reset.x + 25,  btn_reset.y + 10);
+    
 
     SDL_RenderPresent(renderer);
 }
