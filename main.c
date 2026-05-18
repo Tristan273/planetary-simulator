@@ -6,13 +6,21 @@
 #include "rendering.h"
 
 
+typedef enum {
+    MODE_SIMULATION,
+    MODE_CREATE_INPUT
+} Mode;
+
+
+
 int main() {
     int N;
     if(fscanf(stdin, "%d", &N)==0){
         return 1;
     }
 
-    struct body* bodies = malloc(N*sizeof(struct body));
+    int capacity = N;
+    struct body* bodies = malloc(capacity * sizeof(struct body));
 
     for(int i=0; i<N; i++){
         if((fscanf(stdin, "%d", &bodies[i].id)==0) || 
@@ -50,6 +58,7 @@ int main() {
 
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
+    SDL_StartTextInput();
 
     SDL_Window *window = SDL_CreateWindow(
         "N-body simulation",
@@ -89,6 +98,19 @@ int main() {
     int followed_body = -1; // -1 when no body is followed, 0,...,N-1 being the id of the eventually followed body
 
 
+    int creating_body = 0; // to check if we are currently creating a body
+
+    double create_start_x, create_start_y;
+    double create_current_x, create_current_y;
+
+
+    // to input informations of the nwely added body
+    Mode mode = MODE_SIMULATION;
+    char input_mass[64] = "";
+    char input_radius[64] = "";
+
+    int active_field = 0; // 0=mass 1=radius
+
     while (running) {
 
         // ADDING BUTTONS
@@ -115,6 +137,126 @@ int main() {
 
 
         while (SDL_PollEvent(&event)) {
+            if (mode == MODE_CREATE_INPUT) {
+
+                if (event.type == SDL_QUIT){
+                    running = false;
+                }
+
+                else if (event.type == SDL_TEXTINPUT) {
+                    if (active_field == 0)
+                        strcat(input_mass, event.text.text);
+                    else if (active_field == 1)
+                        strcat(input_radius, event.text.text);
+                }
+
+                else if (event.type == SDL_KEYDOWN) {
+
+                    if (event.key.keysym.sym == SDLK_TAB) {
+                        active_field = (active_field + 1) % 2;
+                    }
+
+                    else if (event.key.keysym.sym == SDLK_BACKSPACE) {
+                        if (active_field == 0){
+                            input_mass[0] = '\0';
+                        }
+                        else if (active_field == 1){
+                            input_radius[0] = '\0';
+                        } 
+                    }
+
+                    if (event.key.keysym.sym == SDLK_RETURN ) {
+
+                        mode = MODE_SIMULATION;
+
+                        double mass = atof(input_mass);
+                        double radius = atof(input_radius);
+
+
+                        if (N >= capacity) {
+                            capacity *= 2;
+                            bodies = realloc(bodies, capacity * sizeof(struct body));
+                        }
+
+                        struct body new_body;
+
+                        new_body.id = N;
+                        new_body.mass = mass;
+                        new_body.radius = radius;
+
+                        new_body.position.x = create_start_x;
+                        new_body.position.y = create_start_y;
+
+                        new_body.velocity.x = (create_current_x - create_start_x) * 0.5;
+                        new_body.velocity.y = (create_current_y - create_start_y) * 0.5;
+
+                        new_body.type = 1;
+
+                        new_body.color_r = 150 + rand() % 106;
+                        new_body.color_g = 150 + rand() % 106;
+                        new_body.color_b = 150 + rand() % 106;
+
+                        bodies[N] = new_body;
+                        trail_clear(&trails[N]);
+
+                        N++;
+
+                        // reset input buffers
+                        input_mass[0] = 0;
+                        input_radius[0] = 0;
+                    }
+                }
+
+                render_input_screen(renderer);
+
+
+                SDL_Texture* tex_mass_label = make_text(renderer, font, "Mass:");
+                SDL_Texture* tex_radius_label = make_text(renderer, font, "Radius:");
+
+                SDL_Rect r_mass_label = {20, 50, 0, 0};
+                SDL_Rect r_radius_label = {20, 100, 0, 0};
+
+                SDL_QueryTexture(tex_mass_label, NULL, NULL, &r_mass_label.w, &r_mass_label.h);
+                SDL_QueryTexture(tex_radius_label, NULL, NULL, &r_radius_label.w, &r_radius_label.h);
+
+
+                SDL_Rect r_mass = {120, 50, 0, 0};
+                SDL_Rect r_radius = {120, 100, 0, 0};
+
+                SDL_Texture* tex_mass = make_text(renderer, font, input_mass);
+                SDL_QueryTexture(tex_mass, NULL, NULL, &r_mass.w, &r_mass.h);
+                SDL_Texture* tex_radius = make_text(renderer, font, input_radius);
+                SDL_QueryTexture(tex_radius, NULL, NULL, &r_radius.w, &r_radius.h);
+
+                // Highlight the mass
+                if (active_field == 0) {
+                    SDL_Rect box = {r_mass.x - 5, r_mass.y - 5, r_mass.w + 10, r_mass.h + 10};
+                    SDL_SetRenderDrawColor(renderer, 80, 80, 200, 255);
+                    SDL_RenderDrawRect(renderer, &box);
+                }
+
+                // Highlight the radius 
+                if (active_field == 1) {
+                    SDL_Rect box = {r_radius.x - 5, r_radius.y - 5, r_radius.w + 10, r_radius.h + 10};
+                    SDL_SetRenderDrawColor(renderer, 80, 80, 200, 255);
+                    SDL_RenderDrawRect(renderer, &box);
+                }
+
+                // Render the texts
+                SDL_RenderCopy(renderer, tex_mass_label, NULL, &r_mass_label);
+                SDL_RenderCopy(renderer, tex_radius_label, NULL, &r_radius_label);
+                SDL_RenderCopy(renderer, tex_mass, NULL, &r_mass);
+                SDL_RenderCopy(renderer, tex_radius, NULL, &r_radius);
+
+                SDL_RenderPresent(renderer);
+
+                SDL_DestroyTexture(tex_mass);
+                SDL_DestroyTexture(tex_radius);
+
+                continue;
+            }
+
+
             if (event.type == SDL_QUIT){
                 running = false;
             }
@@ -155,20 +297,17 @@ int main() {
             }
             else if (event.type == SDL_MOUSEBUTTONDOWN) {
 
+                int mx = event.button.x;
+                int my = event.button.y;
+
+                double world_x = (mx - w / 2) / zoom + cam_x;
+                double world_y = (my - h / 2) / zoom + cam_y;
+
                 if(event.button.button == SDL_BUTTON_LEFT) {
                     dragging = 1;
 
                     last_mouse_x = event.button.x;
                     last_mouse_y = event.button.y;
-
-                    int mx = event.button.x;
-                    int my = event.button.y;
-
-                    int w, h;
-                    SDL_GetWindowSize(window, &w, &h);
-
-                    double world_x = (mx - w / 2) / zoom + cam_x;
-                    double world_y = (my - h / 2) / zoom + cam_y;
 
                     followed_body = -1; // resets the followed body every time there is a left click
 
@@ -206,11 +345,32 @@ int main() {
                         }
                     }
                 }
+                if (event.button.button == SDL_BUTTON_RIGHT){
+
+                    if (N < MAX_BODIES){ // Does nothing if N is greater than the maximum amount of bodies allowed 
+
+                        creating_body = 1;
+
+                        create_start_x = world_x;
+                        create_start_y = world_y;
+
+                        create_current_x = world_x;
+                        create_current_y = world_y;
+
+                    }
+                    else {
+                        printf("Maximum amount of bodies reached.");
+                    }
+                }
             }
             else if (event.type == SDL_MOUSEBUTTONUP) {
 
                 if(event.button.button == SDL_BUTTON_LEFT) {
                     dragging = 0;
+                }
+                if (event.button.button == SDL_BUTTON_RIGHT && creating_body){
+                    creating_body = 0;
+                    mode = MODE_CREATE_INPUT;
                 }
             }
             else if (event.type == SDL_MOUSEMOTION) {
@@ -224,6 +384,13 @@ int main() {
 
                     last_mouse_x = event.motion.x;
                     last_mouse_y = event.motion.y;
+                }
+                if (creating_body){
+                    int mx = event.motion.x;
+                    int my = event.motion.y;
+
+                    create_current_x = (mx - w / 2) / zoom + cam_x;
+                    create_current_y = (my - h / 2) / zoom + cam_y;
                 }
             }
         }
@@ -258,39 +425,54 @@ int main() {
             }
         }
 
-        if(paused == 0){
-            for(int k = 0; k < speed; k++){
-                if(backwards == 0){ // the simulation is running forwards
+        if(mode == MODE_SIMULATION){
 
-                    leapfrog_step(bodies, N, dt); // modifies the position and velocity of the bodies
+            if(paused == 0){
+                for(int k = 0; k < speed; k++){
+                    if(backwards == 0){ // the simulation is running forwards
 
-                } else if(paused == 0 && backwards == 1){ // the simulation is running backwards
+                        leapfrog_step(bodies, N, dt); // modifies the position and velocity of the bodies
 
-                    leapfrog_step(bodies, N, -dt); // modifies the position and velocity of the bodies
+                    } else if(paused == 0 && backwards == 1){ // the simulation is running backwards
 
-                } 
-            }
-            for(int i = 0; i < N; i++){
-                if(bodies[i].type != 0){
-                trail_push(&trails[i], bodies[i].position.x, bodies[i].position.y);
+                        leapfrog_step(bodies, N, -dt); // modifies the position and velocity of the bodies
+
+                    } 
                 }
-            }
+                for(int i = 0; i < N; i++){
+                    if(bodies[i].type != 0){
+                    trail_push(&trails[i], bodies[i].position.x, bodies[i].position.y);
+                    }
+                }
 
-            // set the camera to the followed body
-            if(followed_body != -1 && bodies[followed_body].type != 0) {
-                    cam_x = bodies[followed_body].position.x;
-                    cam_y = bodies[followed_body].position.y;
-            }
-            render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, font, btn_pause, btn_slow, btn_fast, btn_reset); // renders only after updating the body 'speed' times 
-
-        } else if (paused == 1) { // the simulation is paused
                 // set the camera to the followed body
                 if(followed_body != -1 && bodies[followed_body].type != 0) {
                         cam_x = bodies[followed_body].position.x;
                         cam_y = bodies[followed_body].position.y;
                 }
-                render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, font, btn_pause, btn_slow, btn_fast, btn_reset);
+                render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, font, btn_pause, btn_slow, btn_fast, btn_reset); // renders only after updating the body 'speed' times 
+
+            } else if (paused == 1) { // the simulation is paused
+                    // set the camera to the followed body
+                    if(followed_body != -1 && bodies[followed_body].type != 0) {
+                            cam_x = bodies[followed_body].position.x;
+                            cam_y = bodies[followed_body].position.y;
+                    }
+                    render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, font, btn_pause, btn_slow, btn_fast, btn_reset);
             }
+            
+            if (creating_body) {
+                // Convertir les coordonnées monde -> écran
+                int sx = (int)((create_start_x - cam_x) * zoom + w / 2);
+                int sy = (int)((create_start_y - cam_y) * zoom + h / 2);
+                int ex = (int)((create_current_x - cam_x) * zoom + w / 2);
+                int ey = (int)((create_current_y - cam_y) * zoom + h / 2);
+
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                draw_arrow(renderer, sx, sy, ex, ey);
+                SDL_RenderPresent(renderer);
+            }
+        }
 
         SDL_Delay(1);
     }

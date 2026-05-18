@@ -149,6 +149,55 @@ void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodie
 }
 
 
+void render_input_screen(SDL_Renderer* r){
+    SDL_SetRenderDrawColor(r, 20, 20, 20, 255);
+    SDL_RenderClear(r);
+
+    // simple debug rectangles
+    SDL_Rect box = {100, 100, 400, 40};
+    SDL_RenderFillRect(r, &box);
+}
+
+SDL_Texture* make_text(SDL_Renderer* renderer, TTF_Font* font, const char* text) {
+    SDL_Color white = {255, 255, 255, 255};
+
+    SDL_Surface* surf = TTF_RenderText_Solid(font, text, white);
+    if (!surf) return NULL;
+
+    SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer, surf);
+    SDL_FreeSurface(surf);
+
+    return tex;
+}
+
+void draw_arrow(SDL_Renderer *renderer, int x1, int y1, int x2, int y2) {
+    // Ligne principale
+    SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+
+    // Calcul de la pointe
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+    double len = sqrt(dx*dx + dy*dy);
+    if (len < 1) return;
+
+    // Vecteur normalisé
+    double nx = dx / len;
+    double ny = dy / len;
+
+    // Taille de la pointe
+    int arrow_size = 10;
+
+    // Les deux côtés de la pointe
+    int ax = x2 - (int)(arrow_size * (nx - 0.5 * ny));
+    int ay = y2 - (int)(arrow_size * (ny + 0.5 * nx));
+    int bx = x2 - (int)(arrow_size * (nx + 0.5 * ny));
+    int by = y2 - (int)(arrow_size * (ny - 0.5 * nx));
+
+    SDL_RenderDrawLine(renderer, x2, y2, ax, ay);
+    SDL_RenderDrawLine(renderer, x2, y2, bx, by);
+}
+
+
 
 void update_body(struct body *body, double dt){
     body->position.x += body->velocity.x * dt;
