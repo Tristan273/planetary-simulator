@@ -40,6 +40,8 @@ SDL_Texture* make_text(SDL_Renderer* renderer, TTF_Font* font, const char* text)
 
 void draw_arrow(SDL_Renderer *renderer, int x1, int y1, int x2, int y2);
 
+void draw_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, int x, int y);
+
 void update_body(struct body *body, double dt);
 
 void update_bodies(struct body *bodies, double dt, int N);
