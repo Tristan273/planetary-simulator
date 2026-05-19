@@ -155,6 +155,12 @@ int main() {
                     if (event.key.keysym.sym == SDLK_TAB) {
                         active_field = (active_field + 1) % 2;
                     }
+                    
+                    else if (event.key.keysym.sym == SDLK_ESCAPE) {
+                        mode = MODE_SIMULATION;
+                        input_mass[0] = '\0';
+                        input_radius[0] = '\0';
+                    }
 
                     else if (event.key.keysym.sym == SDLK_BACKSPACE) {
                         if (active_field == 0){
