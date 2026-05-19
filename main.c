@@ -505,7 +505,7 @@ int main() {
                         cam_x = bodies[followed_body].position.x;
                         cam_y = bodies[followed_body].position.y;
                 }
-                render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, font, btn_pause, btn_slow, btn_fast, btn_reset, btn_backwards, btn_vectors); // renders only after updating the body 'speed' times 
+                render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, paused, backwards, show_vectors, font, btn_pause, btn_slow, btn_fast, btn_reset, btn_backwards, btn_vectors); // renders only after updating the body 'speed' times 
 
             } else if (paused == 1) { // the simulation is paused
                     // set the camera to the followed body
@@ -513,7 +513,7 @@ int main() {
                             cam_x = bodies[followed_body].position.x;
                             cam_y = bodies[followed_body].position.y;
                     }
-                    render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, font, btn_pause, btn_slow, btn_fast, btn_reset, btn_backwards, btn_vectors);
+                    render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, paused, backwards, show_vectors, font, btn_pause, btn_slow, btn_fast, btn_reset, btn_backwards, btn_vectors);
             }
 
             if (show_vectors) {

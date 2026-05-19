@@ -32,7 +32,11 @@ void draw_filled_circle(SDL_Renderer *renderer, int cx, int cy, int r);
 
 void render_body(SDL_Renderer *renderer, SDL_Window *window, struct body body, double zoom, double cam_x, double cam_y);
 
-void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodies, int N, double zoom, double cam_x, double cam_y, int selected_body, TTF_Font *font, SDL_Rect btn_pause, SDL_Rect btn_slow, SDL_Rect btn_fast, SDL_Rect btn_reset, SDL_Rect btn_backwards, SDL_Rect btn_vectors);
+void render_button(SDL_Renderer *renderer, TTF_Font *font, SDL_Rect btn, const char *label, int hovered, int active);
+
+void render_rounded_rect(SDL_Renderer *renderer, SDL_Rect rect, int radius, SDL_Color color);
+
+void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodies, int N, double zoom, double cam_x, double cam_y, int selected_body, int paused, int backwards, int show_vectors,TTF_Font *font, SDL_Rect btn_pause, SDL_Rect btn_slow, SDL_Rect btn_fast, SDL_Rect btn_reset, SDL_Rect btn_backwards, SDL_Rect btn_vectors);
 
 void render_input_screen(SDL_Renderer* r);
 

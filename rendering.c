@@ -79,7 +79,51 @@ void draw_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, int x, 
 }
 
 
-void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodies, int N, double zoom, double cam_x, double cam_y, int selected_body, TTF_Font *font, SDL_Rect btn_pause, SDL_Rect btn_slow, SDL_Rect btn_fast, SDL_Rect btn_reset, SDL_Rect btn_backwards, SDL_Rect btn_vectors) {
+void render_rounded_rect(SDL_Renderer *renderer, SDL_Rect rect, int radius, SDL_Color color) {
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+
+    SDL_Rect center = {rect.x + radius, rect.y, rect.w - 2*radius, rect.h};
+    SDL_RenderFillRect(renderer, &center);
+    SDL_Rect middle = {rect.x, rect.y + radius, rect.w, rect.h - 2*radius};
+    SDL_RenderFillRect(renderer, &middle);
+    
+    // Rounded edges
+    for (int dy = 0; dy < radius; dy++) {
+        int dx = (int)(sqrt(radius*radius - (radius-dy)*(radius-dy)));
+        SDL_RenderDrawLine(renderer, rect.x + radius - dx, rect.y + dy,
+                                     rect.x + rect.w - radius + dx, rect.y + dy);
+        SDL_RenderDrawLine(renderer, rect.x + radius - dx, rect.y + rect.h - dy - 1,
+                                     rect.x + rect.w - radius + dx, rect.y + rect.h - dy - 1);
+    }
+}
+
+void render_button(SDL_Renderer *renderer, TTF_Font *font, SDL_Rect btn, const char *label, int hovered, int active) {
+    SDL_Color color;
+    if (active)
+        color = (SDL_Color){70, 130, 180, 255};  // bleu si actif (ex: Invert ON)
+    else if (hovered)
+        color = (SDL_Color){80, 80, 80, 255};    // gris clair au survol
+    else
+        color = (SDL_Color){35, 35, 35, 255};    // gris foncé normal
+
+    render_rounded_rect(renderer, btn, 6, color);
+
+    // Border of the button
+    SDL_SetRenderDrawColor(renderer, 120, 120, 120, 255);
+    SDL_RenderDrawRect(renderer, &btn);
+
+    // Text
+    SDL_Texture *tex = make_text(renderer, font, label);
+    if (!tex) return;
+    int tw, th;
+    SDL_QueryTexture(tex, NULL, NULL, &tw, &th);
+    SDL_Rect r = {btn.x + (btn.w - tw) / 2, btn.y + (btn.h - th) / 2, tw, th};
+    SDL_RenderCopy(renderer, tex, NULL, &r);
+    SDL_DestroyTexture(tex);
+}
+
+
+void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodies, int N, double zoom, double cam_x, double cam_y, int selected_body, int paused, int backwards, int show_vectors, TTF_Font *font, SDL_Rect btn_pause, SDL_Rect btn_slow, SDL_Rect btn_fast, SDL_Rect btn_reset, SDL_Rect btn_backwards, SDL_Rect btn_vectors) {
     /* Clear the screen with solid black each frame. */
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -132,21 +176,17 @@ void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodie
 
 
     // Render all the buttons
-    SDL_SetRenderDrawColor(renderer, 60, 60, 60, 255);
-    SDL_RenderFillRect(renderer, &btn_pause);
-    SDL_RenderFillRect(renderer, &btn_slow);
-    SDL_RenderFillRect(renderer, &btn_fast);
-    SDL_RenderFillRect(renderer, &btn_reset);
-    SDL_RenderFillRect(renderer, &btn_backwards);
-    SDL_RenderFillRect(renderer, &btn_vectors);
+    int mx, my;
+    SDL_GetMouseState(&mx, &my);
 
-    // Render the button text
-    draw_text(renderer, font, "Pause", btn_pause.x + 25, btn_pause.y + 10);
-    draw_text(renderer, font, "Slow",  btn_slow.x + 25,  btn_slow.y + 10);
-    draw_text(renderer, font, "Fast",  btn_fast.x + 25,  btn_fast.y + 10);
-    draw_text(renderer, font, "Reset",  btn_reset.x + 25,  btn_reset.y + 10);
-    draw_text(renderer, font, "Invert",  btn_backwards.x + 25,  btn_backwards.y + 10);
-    draw_text(renderer, font, "Toggle Velocity",  btn_vectors.x + 25,  btn_vectors.y + 10);
+    #define HOVERED(btn) (mx >= btn.x && mx <= btn.x+btn.w && my >= btn.y && my <= btn.y+btn.h)
+
+    render_button(renderer, font, btn_pause, paused ? "Resume" : "Pause", HOVERED(btn_pause), paused);
+    render_button(renderer, font, btn_slow, "Slow", HOVERED(btn_slow),    0);
+    render_button(renderer, font, btn_fast, "Fast", HOVERED(btn_fast), 0);
+    render_button(renderer, font, btn_reset, "Reset", HOVERED(btn_reset), 0);
+    render_button(renderer, font, btn_backwards, "Invert", HOVERED(btn_backwards), backwards);
+    render_button(renderer, font, btn_vectors, "Velocities", HOVERED(btn_vectors), show_vectors);
 }
 
 
