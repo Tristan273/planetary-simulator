@@ -261,10 +261,20 @@ int main() {
                 running = false;
             }
             else if (event.type == SDL_KEYDOWN) {
-
+                
                 if (event.key.keysym.sym == SDLK_p) { // checks if the pressed key is P
                     paused = 1 - paused; // inverts the value of paused
                 } 
+
+                else if (event.key.keysym.sym == SDLK_DELETE) {
+                    if (followed_body != -1) {
+                        bodies[followed_body].type = 0;
+                        trail_clear(&trails[followed_body]);
+                        followed_body = -1;
+                    }
+                }
+
+
                 else if (event.key.keysym.sym == SDLK_r){ // checks if the pressed key is R
                     for(int i=0; i<N; i++){
                         bodies[i] = initial_bodies[i]; // resets each body to its inital value
