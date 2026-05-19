@@ -155,7 +155,7 @@ int main() {
                     if (event.key.keysym.sym == SDLK_TAB) {
                         active_field = (active_field + 1) % 2;
                     }
-                    
+
                     else if (event.key.keysym.sym == SDLK_ESCAPE) {
                         mode = MODE_SIMULATION;
                         input_mass[0] = '\0';
@@ -266,6 +266,29 @@ int main() {
             if (event.type == SDL_QUIT){
                 running = false;
             }
+
+            else if (event.type == SDL_MOUSEWHEEL) {
+                int mx, my;
+                SDL_GetMouseState(&mx, &my);
+
+
+                // Position monde sous le curseur avant le zoom
+                double world_x = (mx - w / 2.0) / zoom + cam_x;
+                double world_y = (my - h / 2.0) / zoom + cam_y;
+
+
+                if (event.wheel.y > 0) {
+                    zoom *= 1.1;  // zoom in
+                } else if (event.wheel.y < 0) {
+                    zoom /= 1.1;  // zoom out
+                }
+
+
+                // Ajuster la caméra pour zoomer sur le curseur
+                cam_x = world_x - (mx - w / 2.0) / zoom;
+                cam_y = world_y - (my - h / 2.0) / zoom;
+            }
+
             else if (event.type == SDL_KEYDOWN) {
                 
                 if (event.key.keysym.sym == SDLK_p) { // checks if the pressed key is P
