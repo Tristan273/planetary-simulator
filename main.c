@@ -462,7 +462,7 @@ int main() {
             }
             
             if (creating_body) {
-                // Convertir les coordonnées monde -> écran
+               
                 int sx = (int)((create_start_x - cam_x) * zoom + w / 2);
                 int sy = (int)((create_start_y - cam_y) * zoom + h / 2);
                 int ex = (int)((create_current_x - cam_x) * zoom + w / 2);
@@ -470,6 +470,16 @@ int main() {
 
                 SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
                 draw_arrow(renderer, sx, sy, ex, ey);
+
+                double vx = (create_current_x - create_start_x) * 0.5;
+                double vy = (create_current_y - create_start_y) * 0.5;
+                double velocity_norm = sqrt(vx*vx + vy*vy);
+
+                char velocity_buf[64];
+                sprintf(velocity_buf, "Velocity : %.2f", velocity_norm);
+                draw_text(renderer, font, velocity_buf, ex + 10, ey - 20);
+
+
                 SDL_RenderPresent(renderer);
             }
         }
