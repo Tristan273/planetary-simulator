@@ -528,7 +528,6 @@ int main() {
                     SDL_SetRenderDrawColor(renderer, 0, 255, 100, 200);
                     draw_arrow(renderer, sx, sy, ex, ey);
                 }
-                SDL_RenderPresent(renderer);
             }
 
             if (creating_body) {
@@ -548,11 +547,10 @@ int main() {
                 char velocity_buf[64];
                 sprintf(velocity_buf, "Velocity : %.2f", velocity_norm);
                 draw_text(renderer, font, velocity_buf, ex + 10, ey - 20);
-
-
-                SDL_RenderPresent(renderer);
             }
         }
+
+        SDL_RenderPresent(renderer);
 
         SDL_Delay(1);
     }

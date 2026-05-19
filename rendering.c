@@ -147,9 +147,6 @@ void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodie
     draw_text(renderer, font, "Reset",  btn_reset.x + 25,  btn_reset.y + 10);
     draw_text(renderer, font, "Invert",  btn_backwards.x + 25,  btn_backwards.y + 10);
     draw_text(renderer, font, "Toggle Velocity",  btn_vectors.x + 25,  btn_vectors.y + 10);
-    
-
-    SDL_RenderPresent(renderer);
 }
 
 
