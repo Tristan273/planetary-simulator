@@ -98,7 +98,7 @@ struct body merge_bodies(struct body body1, struct body body2){
         strncpy(sum.name, body1.name, MAX_NAME_LENGTH);
     }
     else{
-        strncpy(sum.name, body1.name, MAX_NAME_LENGTH);
+        strncpy(sum.name, body2.name, MAX_NAME_LENGTH);
     }
     return sum;
 }
