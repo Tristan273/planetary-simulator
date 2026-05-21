@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "physics.h"
+#include <string.h>
 
 /* FUNCTIONS */
 
@@ -94,10 +95,10 @@ struct body merge_bodies(struct body body1, struct body body2){
     sum.color_g = (body1.color_g + body2.color_g)/2;
     sum.color_b = (body1.color_b + body2.color_b)/2;
     if (body1.mass > body2.mass){
-        sum.name = body1.name;
+        strncpy(sum.name, body1.name, MAX_NAME_LENGTH);
     }
     else{
-        sum.name = body2.name;
+        strncpy(sum.name, body1.name, MAX_NAME_LENGTH);
     }
     return sum;
 }

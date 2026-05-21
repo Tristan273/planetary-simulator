@@ -146,7 +146,7 @@ void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodie
 
         struct body b = bodies[selected_body];
 
-        sprintf(buffer, "Name %s", b.name);
+        sprintf(buffer, "Name: %s", b.name);
         draw_text(renderer, font, buffer, w - 250, 20);
 
         sprintf(buffer, "Mass: %.2f", b.mass);
@@ -171,7 +171,7 @@ void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodie
         draw_text(renderer, font, buffer, w - 250, 160);
     }
 
-    sprintf(buffer, "Total system energy %.2f", calculate_total_energy(bodies, N));
+    sprintf(buffer, "Total system energy : %.2f", calculate_total_energy(bodies, N));
     draw_text(renderer, font, buffer, 0, 20);
 
 

@@ -33,7 +33,8 @@ int main() {
         (fscanf(stdin, "%d", &bodies[i].type)==0) ||
         (fscanf(stdin, "%d", &bodies[i].color_r)==0) ||
         (fscanf(stdin, "%d", &bodies[i].color_g)==0) ||
-        (fscanf(stdin, "%d", &bodies[i].color_b)==0)){
+        (fscanf(stdin, "%d", &bodies[i].color_b)==0) || 
+        (fscanf(stdin, "%s", bodies[i].name)==0)){
             return 1;
         }
     }
@@ -52,6 +53,8 @@ int main() {
         initial_bodies[i].color_r = bodies[i].color_r;
         initial_bodies[i].color_g = bodies[i].color_g;
         initial_bodies[i].color_b = bodies[i].color_b;
+        strncpy(initial_bodies[i].name, bodies[i].name, MAX_NAME_LENGTH - 1);
+        initial_bodies[i].name[MAX_NAME_LENGTH - 1] = '\0'; // ends the name before overgoing the max length
     }
 
     double dt = 0.001;

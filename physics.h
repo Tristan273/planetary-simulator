@@ -4,8 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 #define G 50  // attraction force constant
+#define MAX_NAME_LENGTH 64
 
 /* STRUCTURES */
 struct vector{
@@ -28,7 +30,7 @@ struct body{
     
     int type;
     
-    char* name;
+    char name[MAX_NAME_LENGTH];
 };
 
 /* FUNCTION PROTOTYPES */
