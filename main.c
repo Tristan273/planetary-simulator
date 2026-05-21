@@ -20,6 +20,9 @@ int main() {
     }
 
     int capacity = N;
+    if(capacity <= 0){
+        capacity = 1;
+    }
     struct body* bodies = malloc(capacity * sizeof(struct body));
 
     for(int i=0; i<N; i++){
@@ -40,7 +43,7 @@ int main() {
     }
     
     // In order to be able to reset the simulation : create a copy of the initial value of bodies
-    struct body* initial_bodies = malloc(N*sizeof(struct body));
+    struct body* initial_bodies = malloc(capacity*sizeof(struct body));
     for(int i=0; i<N; i++){
         initial_bodies[i].id = bodies[i].id;
         initial_bodies[i].mass = bodies[i].mass;
@@ -351,22 +354,6 @@ int main() {
                     last_mouse_x = event.button.x;
                     last_mouse_y = event.button.y;
 
-                    followed_body = -1; // resets the followed body every time there is a left click
-
-                    // Test if bodies are getting clicked on 
-                    for(int i = 0; i < N; i++) {
-                        if(bodies[i].type == 0) continue;
-
-                        double dx = world_x - bodies[i].position.x;
-                        double dy = world_y - bodies[i].position.y;
-                        double dist2 = dx*dx + dy*dy;
-
-                        if(dist2 <= bodies[i].radius * bodies[i].radius) {
-                            followed_body = i;
-                            break;
-                        }
-                    }
-
                     // Test if buttons are getting cliked on
 
                     if (mx >= btn_pause.x && mx <= btn_pause.x + btn_pause.w && my >= btn_pause.y && my <= btn_pause.y + btn_pause.h){
@@ -394,6 +381,24 @@ int main() {
                     }
                     else if (mx >= btn_names.x && mx <= btn_names.x + btn_names.w && my >= btn_names.y && my <= btn_names.y + btn_names.h){
                         show_names = 1 - show_names;
+                    }
+                    // If no button is getting clicked on, check if it is the case for a body
+                    else {
+                        followed_body = -1;
+
+                        // Test if bodies are getting clicked on 
+                        for(int i = 0; i < N; i++) {
+                            if(bodies[i].type == 0) continue;
+
+                            double dx = world_x - bodies[i].position.x;
+                            double dy = world_y - bodies[i].position.y;
+                            double dist2 = dx*dx + dy*dy;
+
+                            if(dist2 <= bodies[i].radius * bodies[i].radius) {
+                                followed_body = i;
+                                break;
+                            }
+                        }
                     }
 
                 }
