@@ -119,29 +119,16 @@ int main() {
         int w, h;
         SDL_GetWindowSize(window, &w, &h);
 
-        // Button size
         int btn_w = w * 0.08;
         int btn_h = h * 0.05;
-        int y = h - btn_h - 10; // for the buttons to be at the bottom of the window even when resizing the window
+        int btn_x = 20;
 
-        // Pause button
-        SDL_Rect btn_pause = {w * 0.05, y, btn_w, btn_h};
-
-        // Slow button
-        SDL_Rect btn_slow = {w * 0.05 + btn_w + 10, y, btn_w, btn_h};
-
-        // Fast button
-        SDL_Rect btn_fast = {w * 0.05 + 2*(btn_w + 10), y, btn_w, btn_h};
-
-        // Reset button
-        SDL_Rect btn_reset = {w * 0.05 + 3*(btn_w + 10), y, btn_w, btn_h};
-        
-        // Button to invert the simulation
-        SDL_Rect btn_backwards = {w * 0.05 + 4*(btn_w + 10), y, btn_w, btn_h};
-
-        // Button to toggle the display of the velocity vectors
-        SDL_Rect btn_vectors   = {w * 0.05 + 5*(btn_w + 10), y, btn_w, btn_h};
-
+        SDL_Rect btn_pause = {btn_x, 60, btn_w, btn_h};
+        SDL_Rect btn_slow = {btn_x, 60 + 1*(btn_h + 10), btn_w, btn_h};
+        SDL_Rect btn_fast = {btn_x, 60 + 2*(btn_h + 10), btn_w, btn_h};
+        SDL_Rect btn_reset = {btn_x, 60 + 3*(btn_h + 10), btn_w, btn_h};
+        SDL_Rect btn_backwards = {btn_x, 60 + 4*(btn_h + 10), btn_w, btn_h};
+        SDL_Rect btn_vectors = {btn_x, 60 + 5*(btn_h + 10), btn_w, btn_h};
 
 
 
