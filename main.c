@@ -121,6 +121,8 @@ int main() {
 
     int show_names = 0; // show (or not) the names of the bodies next to them
 
+    int show_buttons = 1; // to display (or not) the buttons
+
 
     while (running) {
 
@@ -139,6 +141,7 @@ int main() {
         SDL_Rect btn_backwards = {btn_x, 60 + 4*(btn_h + 10), btn_w, btn_h};
         SDL_Rect btn_vectors = {btn_x, 60 + 5*(btn_h + 10), btn_w, btn_h};
         SDL_Rect btn_names = {btn_x, 60 + 6*(btn_h + 10), btn_w, btn_h};
+        SDL_Rect btn_buttons = {btn_x, 0.93*h, btn_w, btn_h};
 
 
 
@@ -382,6 +385,9 @@ int main() {
                     else if (mx >= btn_names.x && mx <= btn_names.x + btn_names.w && my >= btn_names.y && my <= btn_names.y + btn_names.h){
                         show_names = 1 - show_names;
                     }
+                    else if (mx >= btn_buttons.x && mx <= btn_buttons.x + btn_buttons.w && my >= btn_buttons.y && my <= btn_buttons.y + btn_buttons.h){
+                        show_buttons = 1 - show_buttons;
+                    }
                     // If no button is getting clicked on, check if it is the case for a body
                     else {
                         followed_body = -1;
@@ -507,7 +513,7 @@ int main() {
                         cam_x = bodies[followed_body].position.x;
                         cam_y = bodies[followed_body].position.y;
                 }
-                render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, paused, backwards, show_vectors, show_names, font, btn_pause, btn_slow, btn_fast, btn_reset, btn_backwards, btn_vectors, btn_names); // renders only after updating the body 'speed' times 
+                render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, paused, backwards, show_vectors, show_names, show_buttons, font, btn_pause, btn_slow, btn_fast, btn_reset, btn_backwards, btn_vectors, btn_names, btn_buttons); // renders only after updating the body 'speed' times 
 
             } else if (paused == 1) { // the simulation is paused
                     // set the camera to the followed body
@@ -515,7 +521,7 @@ int main() {
                             cam_x = bodies[followed_body].position.x;
                             cam_y = bodies[followed_body].position.y;
                     }
-                    render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, paused, backwards, show_vectors, show_names, font, btn_pause, btn_slow, btn_fast, btn_reset, btn_backwards, btn_vectors, btn_names);
+                    render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, paused, backwards, show_vectors, show_names, show_buttons, font, btn_pause, btn_slow, btn_fast, btn_reset, btn_backwards, btn_vectors, btn_names, btn_buttons);
             }
 
             if (creating_body) {

@@ -123,7 +123,7 @@ void render_button(SDL_Renderer *renderer, TTF_Font *font, SDL_Rect btn, const c
 }
 
 
-void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodies, int N, double zoom, double cam_x, double cam_y, int selected_body, int paused, int backwards, int show_vectors, int show_names, TTF_Font *font, SDL_Rect btn_pause, SDL_Rect btn_slow, SDL_Rect btn_fast, SDL_Rect btn_reset, SDL_Rect btn_backwards, SDL_Rect btn_vectors, SDL_Rect btn_names) {
+void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodies, int N, double zoom, double cam_x, double cam_y, int selected_body, int paused, int backwards, int show_vectors, int show_names, int show_buttons, TTF_Font *font, SDL_Rect btn_pause, SDL_Rect btn_slow, SDL_Rect btn_fast, SDL_Rect btn_reset, SDL_Rect btn_backwards, SDL_Rect btn_vectors, SDL_Rect btn_names, SDL_Rect btn_buttons) {
     /* Clear the screen with solid black each frame. */
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -181,15 +181,17 @@ void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodie
 
     #define HOVERED(btn) (mx >= btn.x && mx <= btn.x+btn.w && my >= btn.y && my <= btn.y+btn.h)
 
-    render_button(renderer, font, btn_pause, paused ? "Resume" : "Pause", HOVERED(btn_pause), paused);
-    render_button(renderer, font, btn_slow, "Slow", HOVERED(btn_slow),    0);
-    render_button(renderer, font, btn_fast, "Fast", HOVERED(btn_fast), 0);
-    render_button(renderer, font, btn_reset, "Reset", HOVERED(btn_reset), 0);
-    render_button(renderer, font, btn_backwards, "Invert", HOVERED(btn_backwards), backwards);
-    render_button(renderer, font, btn_vectors, "Velocities", HOVERED(btn_vectors), show_vectors);
-    render_button(renderer, font, btn_names, "Names", HOVERED(btn_names), show_names);
+    if(show_buttons){
+        render_button(renderer, font, btn_pause, paused ? "Resume" : "Pause", HOVERED(btn_pause), paused);
+        render_button(renderer, font, btn_slow, "Slow", HOVERED(btn_slow),    0);
+        render_button(renderer, font, btn_fast, "Fast", HOVERED(btn_fast), 0);
+        render_button(renderer, font, btn_reset, "Reset", HOVERED(btn_reset), 0);
+        render_button(renderer, font, btn_backwards, "Invert", HOVERED(btn_backwards), backwards);
+        render_button(renderer, font, btn_vectors, "Velocities", HOVERED(btn_vectors), show_vectors);
+        render_button(renderer, font, btn_names, "Names", HOVERED(btn_names), show_names);
+    }
 
-
+    render_button(renderer, font, btn_buttons, "Menu", HOVERED(btn_buttons), show_buttons);
 
     if (show_vectors) {
         for (int i = 0; i < N; i++) {
