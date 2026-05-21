@@ -146,42 +146,52 @@ void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodie
     if(selected_body != -1 && bodies[selected_body].type != 0){
         struct body b = bodies[selected_body];
 
+        SDL_Rect panel = {w-290, 0, w, 180};
+        SDL_SetRenderDrawColor(renderer, 40, 40, 40, 180);
+        SDL_RenderFillRect(renderer, &panel);
+
         sprintf(buffer, "Name: %s", b.name);
-        draw_text(renderer, font, buffer, w - 250, 20);
+        draw_text(renderer, font, buffer, w - 270, 10);
 
         sprintf(buffer, "Mass: %.2f", b.mass);
-        draw_text(renderer, font, buffer, w - 250, 40);
+        draw_text(renderer, font, buffer, w - 270, 30);
 
         sprintf(buffer, "Radius: %.2f", b.radius);
-        draw_text(renderer, font, buffer, w - 250, 60);
+        draw_text(renderer, font, buffer, w - 270, 50);
 
         sprintf(buffer, "Position: (%.2f, %.2f)", b.position.x, b.position.y);
-        draw_text(renderer, font, buffer, w - 250, 80);
+        draw_text(renderer, font, buffer, w - 270, 70);
 
         sprintf(buffer, "Velocity: (%.2f, %.2f)", b.velocity.x, b.velocity.y);
-        draw_text(renderer, font, buffer, w - 250, 100);
+        draw_text(renderer, font, buffer, w - 270, 90);
 
         sprintf(buffer, "Kinetic energy : %.2f", calculate_kinetic_energy(b));
-        draw_text(renderer, font, buffer, w - 250, 120);
+        draw_text(renderer, font, buffer, w - 270, 110);
 
         sprintf(buffer, "Potential energy : %.2f", calculate_potential_energy(b, bodies, N));
-        draw_text(renderer, font, buffer, w - 250, 140);
+        draw_text(renderer, font, buffer, w - 270, 130);
 
         sprintf(buffer, "Body Energy : %.2f", calculate_kinetic_energy(b) + calculate_potential_energy(b, bodies, N));
-        draw_text(renderer, font, buffer, w - 250, 160);
+        draw_text(renderer, font, buffer, w - 270, 150);
     }
-
-    sprintf(buffer, "Total system energy : %.2f", calculate_total_energy(bodies, N));
-    draw_text(renderer, font, buffer, 0, 20);
 
 
     // Render all the buttons
     int mx, my;
     SDL_GetMouseState(&mx, &my);
 
-    #define HOVERED(btn) (mx >= btn.x && mx <= btn.x+btn.w && my >= btn.y && my <= btn.y+btn.h)
+    #define HOVERED(btn) (mx >= btn.x && mx <= btn.x+btn.w && my >= btn.y && my <= btn.y+btn.h)   
 
     if(show_buttons){
+        SDL_Rect panel = {5, 5, 0.08*w + 30, h - 10};
+        SDL_SetRenderDrawColor(renderer, 20, 20, 20, 180);
+        SDL_RenderFillRect(renderer, &panel);
+
+
+        sprintf(buffer, "E = %.0f", calculate_total_energy(bodies, N));
+        draw_text(renderer, font, buffer, 6, 10);
+
+
         render_button(renderer, font, btn_pause, paused ? "Resume" : "Pause", HOVERED(btn_pause), paused);
         render_button(renderer, font, btn_slow, "Slow", HOVERED(btn_slow),    0);
         render_button(renderer, font, btn_fast, "Fast", HOVERED(btn_fast), 0);
