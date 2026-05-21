@@ -116,6 +116,9 @@ int main() {
 
     int show_vectors = 0; // show (or not) the velocity vectors of the bodies
 
+    int show_names = 0; // show (or not) the names of the bodies next to them
+
+
     while (running) {
 
         // ADDING BUTTONS
@@ -132,6 +135,7 @@ int main() {
         SDL_Rect btn_reset = {btn_x, 60 + 3*(btn_h + 10), btn_w, btn_h};
         SDL_Rect btn_backwards = {btn_x, 60 + 4*(btn_h + 10), btn_w, btn_h};
         SDL_Rect btn_vectors = {btn_x, 60 + 5*(btn_h + 10), btn_w, btn_h};
+        SDL_Rect btn_names = {btn_x, 60 + 6*(btn_h + 10), btn_w, btn_h};
 
 
 
@@ -388,6 +392,9 @@ int main() {
                     else if (mx >= btn_vectors.x && mx <= btn_vectors.x + btn_vectors.w && my >= btn_vectors.y && my <= btn_vectors.y + btn_vectors.h){
                         show_vectors = 1 - show_vectors;
                     }
+                    else if (mx >= btn_names.x && mx <= btn_names.x + btn_names.w && my >= btn_names.y && my <= btn_names.y + btn_names.h){
+                        show_names = 1 - show_names;
+                    }
 
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT){
@@ -495,7 +502,7 @@ int main() {
                         cam_x = bodies[followed_body].position.x;
                         cam_y = bodies[followed_body].position.y;
                 }
-                render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, paused, backwards, show_vectors, font, btn_pause, btn_slow, btn_fast, btn_reset, btn_backwards, btn_vectors); // renders only after updating the body 'speed' times 
+                render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, paused, backwards, show_vectors, show_names, font, btn_pause, btn_slow, btn_fast, btn_reset, btn_backwards, btn_vectors, btn_names); // renders only after updating the body 'speed' times 
 
             } else if (paused == 1) { // the simulation is paused
                     // set the camera to the followed body
@@ -503,21 +510,7 @@ int main() {
                             cam_x = bodies[followed_body].position.x;
                             cam_y = bodies[followed_body].position.y;
                     }
-                    render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, paused, backwards, show_vectors, font, btn_pause, btn_slow, btn_fast, btn_reset, btn_backwards, btn_vectors);
-            }
-
-            if (show_vectors) {
-                for (int i = 0; i < N; i++) {
-                    if (bodies[i].type == 0) continue;
-
-                    int sx = (int)((bodies[i].position.x - cam_x) * zoom + w / 2);
-                    int sy = (int)((bodies[i].position.y - cam_y) * zoom + h / 2);
-                    int ex = (int)((bodies[i].position.x + bodies[i].velocity.x * 2 - cam_x) * zoom + w / 2);
-                    int ey = (int)((bodies[i].position.y + bodies[i].velocity.y * 2 - cam_y) * zoom + h / 2);
-
-                    SDL_SetRenderDrawColor(renderer, 0, 255, 100, 200);
-                    draw_arrow(renderer, sx, sy, ex, ey);
-                }
+                    render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, paused, backwards, show_vectors, show_names, font, btn_pause, btn_slow, btn_fast, btn_reset, btn_backwards, btn_vectors, btn_names);
             }
 
             if (creating_body) {

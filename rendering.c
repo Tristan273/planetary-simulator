@@ -123,10 +123,13 @@ void render_button(SDL_Renderer *renderer, TTF_Font *font, SDL_Rect btn, const c
 }
 
 
-void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodies, int N, double zoom, double cam_x, double cam_y, int selected_body, int paused, int backwards, int show_vectors, TTF_Font *font, SDL_Rect btn_pause, SDL_Rect btn_slow, SDL_Rect btn_fast, SDL_Rect btn_reset, SDL_Rect btn_backwards, SDL_Rect btn_vectors) {
+void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodies, int N, double zoom, double cam_x, double cam_y, int selected_body, int paused, int backwards, int show_vectors, int show_names, TTF_Font *font, SDL_Rect btn_pause, SDL_Rect btn_slow, SDL_Rect btn_fast, SDL_Rect btn_reset, SDL_Rect btn_backwards, SDL_Rect btn_vectors, SDL_Rect btn_names) {
     /* Clear the screen with solid black each frame. */
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
+
+    int w, h;
+    SDL_GetWindowSize(window, &w, &h);
 
     /* Draw trails behind the bodies. */
     for (int i = 0; i < N; i++)
@@ -141,9 +144,6 @@ void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodie
 
     // Render the text on the screen if a body is followed
     if(selected_body != -1 && bodies[selected_body].type != 0){
-        int w, h;
-        SDL_GetWindowSize(window, &w, &h);
-
         struct body b = bodies[selected_body];
 
         sprintf(buffer, "Name: %s", b.name);
@@ -187,6 +187,33 @@ void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodie
     render_button(renderer, font, btn_reset, "Reset", HOVERED(btn_reset), 0);
     render_button(renderer, font, btn_backwards, "Invert", HOVERED(btn_backwards), backwards);
     render_button(renderer, font, btn_vectors, "Velocities", HOVERED(btn_vectors), show_vectors);
+    render_button(renderer, font, btn_names, "Names", HOVERED(btn_names), show_names);
+
+
+
+    if (show_vectors) {
+        for (int i = 0; i < N; i++) {
+            if (bodies[i].type == 0) continue;
+
+            int sx = (int)((bodies[i].position.x - cam_x) * zoom + w / 2);
+            int sy = (int)((bodies[i].position.y - cam_y) * zoom + h / 2);
+            int ex = (int)((bodies[i].position.x + bodies[i].velocity.x * 2 - cam_x) * zoom + w / 2);
+            int ey = (int)((bodies[i].position.y + bodies[i].velocity.y * 2 - cam_y) * zoom + h / 2);
+
+            SDL_SetRenderDrawColor(renderer, 0, 255, 100, 200);
+            draw_arrow(renderer, sx, sy, ex, ey);
+        }
+    }
+
+    if (show_names) {
+        for (int i = 0; i < N; i++) {
+            if (bodies[i].type == 0) continue;
+
+            int sx = (int)((bodies[i].position.x - cam_x) * zoom + w / 2);
+            int sy = (int)((bodies[i].position.y - cam_y) * zoom + h / 2);
+            draw_text(renderer, font, bodies[i].name, sx + (int)(bodies[i].radius * zoom) + 5, sy);
+        }
+    }
 }
 
 
