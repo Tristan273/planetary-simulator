@@ -197,9 +197,16 @@ void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodie
 
             int sx = (int)((bodies[i].position.x - cam_x) * zoom + w / 2);
             int sy = (int)((bodies[i].position.y - cam_y) * zoom + h / 2);
-            int ex = (int)((bodies[i].position.x + bodies[i].velocity.x * 2 - cam_x) * zoom + w / 2);
-            int ey = (int)((bodies[i].position.y + bodies[i].velocity.y * 2 - cam_y) * zoom + h / 2);
+            int ex, ey;
 
+            if(backwards){
+                ex = (int)((bodies[i].position.x - bodies[i].velocity.x * 2 - cam_x) * zoom + w / 2);
+                ey = (int)((bodies[i].position.y - bodies[i].velocity.y * 2 - cam_y) * zoom + h / 2);
+            }else {
+                ex = (int)((bodies[i].position.x + bodies[i].velocity.x * 2 - cam_x) * zoom + w / 2);
+                ey = (int)((bodies[i].position.y + bodies[i].velocity.y * 2 - cam_y) * zoom + h / 2);
+            }
+           
             SDL_SetRenderDrawColor(renderer, 0, 255, 100, 200);
             draw_arrow(renderer, sx, sy, ex, ey);
         }
