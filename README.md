@@ -59,7 +59,7 @@ This two-stage velocity update is what distinguishes the leapfrog from a simple 
 ---
 
 ## Graphical Display
-The graphical interface is built using SDL2 and SDL2_ttf. Each body is rendered as a filled circle whose size reflects its radius, and a color chosen at initialization. As the simulation runs, each body leaves an orbital trail behind it, making the trajectory visually clear. The trail length is set to 300 but can be modified by changing the value of `TRAIL_LEN` in `p
+The graphical interface is built using SDL2 and SDL2_ttf. Each body is rendered as a filled circle whose size reflects its radius, and a color chosen at initialization. As the simulation runs, each body leaves an orbital trail behind it, making the trajectory visually clear. The trail length is set to 300 but can be modified by changing the value of `TRAIL_LEN` in `rendering.h`
 A control panel on the left side of the window groups all the simulation buttons: pause/resume, speed control, reset, time inversion, and toggles for velocity vectors and body name labels. When a body is selected by clicking on it (like the Sun in the screenshot above), an information panel appears in the top-right corner displaying its name, mass, radius, position, velocity, kinetic energy, potential energy, and total body energy. 
 The total system energy is displayed in the top-left corner at all times. Outside of bodies merging, this energy should remain the same.
 
