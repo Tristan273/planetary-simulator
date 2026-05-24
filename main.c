@@ -18,6 +18,8 @@ typedef enum {
 managing simulation updates, rendering, and user interaction. */
 int main() {
 
+    int N;
+
     /*Loads initial bodies */
     if(fscanf(stdin, "%d", &N)==0){
         return 1;
