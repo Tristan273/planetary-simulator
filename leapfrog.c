@@ -1,5 +1,6 @@
 #include "leapfrog.h"
-
+/* Updates the positions and velocities of N bodies over a timestep dt using the leapfrog 
+integration method */
 void leapfrog_step(struct body *bodies, int N, double dt) {
     struct vector acc[N];
 
