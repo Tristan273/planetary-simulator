@@ -103,6 +103,7 @@ struct body merge_bodies(struct body body1, struct body body2){
     return sum;
 }
 
+/*Changes the velocity of two bodies body1 and body2 who rebound off of each other. Isn't used anymore. */
 void rebound_bodies(struct body *body1, struct body *body2){
 
     double norm1 = norm(body1->velocity);
@@ -123,6 +124,7 @@ void rebound_bodies(struct body *body1, struct body *body2){
     body2->velocity.y = y1/norm1 * norm2;
 }
 
+/*Returns 1 if the two bodies body1 and body2 are colliding, 0 if they aren't.*/
 int are_colliding(struct body body1, struct body body2){
     double distance = norm(substract_2_vectors(body1.position, body2.position));
 
@@ -135,7 +137,7 @@ int are_colliding(struct body body1, struct body body2){
     }
 }
 
-
+/* Returns the gravitationnal potential energy of body1 which is caused by the N bodies in the array T*/
 double calculate_potential_energy(struct body body1, struct body *T, int N){
     double kinetic_energy = 0;
     struct vector OM;
@@ -156,11 +158,12 @@ double calculate_potential_energy(struct body body1, struct body *T, int N){
     return kinetic_energy;
 }
 
-
+/* Returns the kinetic energy of body1*/
 double calculate_kinetic_energy(struct body body1){
     return body1.mass * norm(body1.velocity)* norm(body1.velocity)  / 2;
 }
 
+/*Using the two previous functions, calulates the total energy of the system of N bodies.*/
 double calculate_total_energy(struct body* bodies, int N){
     double E = 0;
 
