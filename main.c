@@ -5,16 +5,20 @@
 #include "leapfrog.h"
 #include "rendering.h"
 
-
+/* Defines the application mode:
+   MODE_SIMULATION: normal physics simulation and rendering
+   MODE_CREATE_INPUT: user input mode for creating a new body */
 typedef enum {
     MODE_SIMULATION,
     MODE_CREATE_INPUT
 } Mode;
 
 
-
+/* Handles initialization, input loading, SDL setup, and runs the main loop 
+managing simulation updates, rendering, and user interaction. */
 int main() {
-    int N;
+
+    /*Loads initial bodies */
     if(fscanf(stdin, "%d", &N)==0){
         return 1;
     }
@@ -25,6 +29,7 @@ int main() {
     }
     struct body* bodies = malloc(capacity * sizeof(struct body));
 
+    /* Read all body data */
     for(int i=0; i<N; i++){
         if((fscanf(stdin, "%d", &bodies[i].id)==0) || 
         (fscanf(stdin, "%lf", &bodies[i].mass)==0) || 
@@ -62,6 +67,8 @@ int main() {
 
     double dt = 0.001;
 
+
+    /*SDL initialization*/
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
     SDL_StartTextInput();
@@ -81,7 +88,7 @@ int main() {
     // To write something inside of the window
     TTF_Font *font = TTF_OpenFont("arial.ttf", 18);
 
-
+    /*Simulation state*/
     bool running = true;
     SDL_Event event;
 
@@ -103,8 +110,8 @@ int main() {
 
     int followed_body = -1; // -1 when no body is followed, 0,...,N-1 being the id of the eventually followed body
 
-
-    int creating_body = 0; // to check if we are currently creating a body
+    /* Body creation state */
+    int creating_body = 0; 
 
     double create_start_x, create_start_y;
     double create_current_x, create_current_y;
@@ -116,14 +123,14 @@ int main() {
     char input_radius[64] = "";
 
     int active_field = 0; // 0=mass 1=radius
-
+    
     int show_vectors = 0; // show (or not) the velocity vectors of the bodies
 
     int show_names = 0; // show (or not) the names of the bodies next to them
 
     int show_buttons = 1; // to display (or not) the buttons
 
-
+    /*Main loop*/
     while (running) {
 
         // ADDING BUTTONS
@@ -144,10 +151,12 @@ int main() {
         SDL_Rect btn_buttons = {btn_x, 0.93*h, btn_w, btn_h};
 
 
-
+        /*Event handling*/
         while (SDL_PollEvent(&event)) {
+            /*Input mode: create new body*/
             if (mode == MODE_CREATE_INPUT) {
 
+                /*Global events*/
                 if (event.type == SDL_QUIT){
                     running = false;
                 }
@@ -277,6 +286,7 @@ int main() {
             }
 
             else if (event.type == SDL_MOUSEWHEEL) {
+                /* Zoom centered on mouse position */
                 int mx, my;
                 SDL_GetMouseState(&mx, &my);
 
@@ -299,7 +309,7 @@ int main() {
             }
 
             else if (event.type == SDL_KEYDOWN) {
-                
+                /* Simulation controls */
                 if (event.key.keysym.sym == SDLK_p) { // checks if the pressed key is P
                     paused = 1 - paused; // inverts the value of paused
                 } 
@@ -344,7 +354,7 @@ int main() {
                 }
             }
             else if (event.type == SDL_MOUSEBUTTONDOWN) {
-
+                /* UI + body selection handling */
                 int mx = event.button.x;
                 int my = event.button.y;
 
@@ -437,7 +447,7 @@ int main() {
                 }
             }
             else if (event.type == SDL_MOUSEMOTION) {
-
+                /* Camera dragging / body creation direction */
                 if(dragging) {
                     int dx = event.motion.x - last_mouse_x;
                     int dy = event.motion.y - last_mouse_y;
@@ -457,7 +467,7 @@ int main() {
                 }
             }
         }
-
+        /*Physics update*/
         frame++; 
 
         // Removing the objects that are too far from the simulation
@@ -467,7 +477,7 @@ int main() {
             }
         }
 
-        // Test the collisions
+        /* Collision detection + merging */
         for(int i = 0; i < N; i++){
             if (bodies[i].type == 0) continue;
 
@@ -491,6 +501,7 @@ int main() {
         if(mode == MODE_SIMULATION){
 
             if(paused == 0){
+                /* Physics integration (leapfrog) */
                 for(int k = 0; k < speed; k++){
                     if(backwards == 0){ // the simulation is running forwards
 
@@ -502,17 +513,19 @@ int main() {
 
                     } 
                 }
+                /* Update trails */
                 for(int i = 0; i < N; i++){
                     if(bodies[i].type != 0){
                     trail_push(&trails[i], bodies[i].position.x, bodies[i].position.y);
                     }
                 }
 
-                // set the camera to the followed body
+                // sets the camera to the followed body
                 if(followed_body != -1 && bodies[followed_body].type != 0) {
                         cam_x = bodies[followed_body].position.x;
                         cam_y = bodies[followed_body].position.y;
                 }
+                /*Rendering*/ 
                 render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, paused, backwards, show_vectors, show_names, show_buttons, font, btn_pause, btn_slow, btn_fast, btn_reset, btn_backwards, btn_vectors, btn_names, btn_buttons); // renders only after updating the body 'speed' times 
 
             } else if (paused == 1) { // the simulation is paused
@@ -523,7 +536,7 @@ int main() {
                     }
                     render_scene(renderer, window, bodies, N, zoom, cam_x, cam_y, followed_body, paused, backwards, show_vectors, show_names, show_buttons, font, btn_pause, btn_slow, btn_fast, btn_reset, btn_backwards, btn_vectors, btn_names, btn_buttons);
             }
-
+            /* Body creation preview */
             if (creating_body) {
                
                 int sx = (int)((create_start_x - cam_x) * zoom + w / 2);
@@ -548,7 +561,7 @@ int main() {
 
         SDL_Delay(1);
     }
-
+    /*Cleanup*/ 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 
