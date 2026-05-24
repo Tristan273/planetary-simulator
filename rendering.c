@@ -9,7 +9,7 @@
 /* One trail per body, indexed the same way as the bodies[] array */
 Trail trails[MAX_BODIES];
 
-//Appends position (x, y) to trail t
+//Appends the position (x, y) to the trail t
 void trail_push(Trail *t, double x, double y) {
     t->x[t->head] = x;
     t->y[t->head] = y;
@@ -23,6 +23,9 @@ void trail_clear(Trail *t) {
     t->count = 0;
 }
 
+
+/* Renders the motion trail of a body using stored trail positions, applying camera offset
+ and zoom transformations. */
 void render_trail(SDL_Renderer *renderer, SDL_Window *window, struct body *body, Trail *t, double zoom, double cam_x, double cam_y) {
     int w, h;
     SDL_GetWindowSize(window, &w, &h);
@@ -36,7 +39,7 @@ void render_trail(SDL_Renderer *renderer, SDL_Window *window, struct body *body,
         prev = cur;
     }
 }
-
+/*draws a filled circle centered in (cx, cy), of radius r*/
 void draw_filled_circle(SDL_Renderer *renderer, int cx, int cy, int r) {
     for (int dy = -r; dy <= r; dy++) {
         int dx = (int)sqrt(r*r - dy*dy);
@@ -46,7 +49,7 @@ void draw_filled_circle(SDL_Renderer *renderer, int cx, int cy, int r) {
     }
 }
 
-
+/* Renders a body by converting world coordinates to screen space using camera offset and zoom. */
 void render_body(SDL_Renderer *renderer, SDL_Window *window, struct body body, double zoom, double cam_x, double cam_y){
     if(body.type != 0){
         int w, h;
@@ -59,7 +62,7 @@ void render_body(SDL_Renderer *renderer, SDL_Window *window, struct body body, d
     }
 }
 
-
+/* Renders text in white using the given font, with (x, y) as the top-left position. */
 void draw_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, int x, int y){
     SDL_Color color = {255,255,255,255};
 
@@ -78,7 +81,8 @@ void draw_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, int x, 
     SDL_DestroyTexture(texture);
 }
 
-
+/* Draws a filled rounded rectangle by combining central rectangles and circular arc
+ approximations at the corners. */
 void render_rounded_rect(SDL_Renderer *renderer, SDL_Rect rect, int radius, SDL_Color color) {
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 
@@ -97,6 +101,8 @@ void render_rounded_rect(SDL_Renderer *renderer, SDL_Rect rect, int radius, SDL_
     }
 }
 
+/* Renders a button with different visual states (normal, hovered, active) including rounded 
+background, border, and centered label text. */
 void render_button(SDL_Renderer *renderer, TTF_Font *font, SDL_Rect btn, const char *label, int hovered, int active) {
     SDL_Color color;
     if (active)
@@ -122,7 +128,8 @@ void render_button(SDL_Renderer *renderer, TTF_Font *font, SDL_Rect btn, const c
     SDL_DestroyTexture(tex);
 }
 
-
+/* Renders the full simulation frame, including trails, bodies, UI panels, buttons, 
+overlays (selection info, vectors, names), and camera transforms. */
 void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodies, int N, double zoom, double cam_x, double cam_y, int selected_body, int paused, int backwards, int show_vectors, int show_names, int show_buttons, TTF_Font *font, SDL_Rect btn_pause, SDL_Rect btn_slow, SDL_Rect btn_fast, SDL_Rect btn_reset, SDL_Rect btn_backwards, SDL_Rect btn_vectors, SDL_Rect btn_names, SDL_Rect btn_buttons) {
     /* Clear the screen with solid black each frame. */
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -235,7 +242,7 @@ void render_scene(SDL_Renderer *renderer, SDL_Window *window, struct body *bodie
     }
 }
 
-
+/* Renders the input screen background and basic UI placeholders. */
 void render_input_screen(SDL_Renderer* r){
     SDL_SetRenderDrawColor(r, 20, 20, 20, 255);
     SDL_RenderClear(r);
@@ -256,7 +263,7 @@ SDL_Texture* make_text(SDL_Renderer* renderer, TTF_Font* font, const char* text)
 
     return tex;
 }
-
+/*draws an arrow from (x1, y1) to (x2, y2)*/
 void draw_arrow(SDL_Renderer *renderer, int x1, int y1, int x2, int y2) {
     // Ligne principale
     SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
@@ -285,12 +292,13 @@ void draw_arrow(SDL_Renderer *renderer, int x1, int y1, int x2, int y2) {
 }
 
 
-
+/* Updates a body's position using its velocity and timestep dt. */
 void update_body(struct body *body, double dt){
     body->position.x += body->velocity.x * dt;
     body->position.y += body->velocity.y * dt;
 }
 
+/* Updates positions of all bodies in the array over timestep dt. */
 void update_bodies(struct body *bodies, double dt, int N){
     for(int i=0; i<N; i++){
         update_body(&bodies[i], dt);
